@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "382411492426",
+    "firebase_url": "https://whenwillwemeet-479fc.firebaseio.com",
+    "project_id": "whenwillwemeet-479fc",
+    "storage_bucket": "whenwillwemeet-479fc.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:382411492426:android:359a5124be87182d07aab3",
+        "android_client_info": {
+          "package_name": "com.example.whenwillwemeet"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "382411492426-32annbn2o106v6pc55ufabuimf0euov5.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.whenwillwemeet",
+            "certificate_hash": "6b98489b499fe5aba87ef993500545b4118c4574"
+          }
+        },
+        {
+          "client_id": "382411492426-7v9hp55m9q882n0ip0b1u4ov77gl7edr.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCWwYuKkgTmxjoOhCk0xpf96FEk9asSV1Y"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "382411492426-7v9hp55m9q882n0ip0b1u4ov77gl7edr.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
