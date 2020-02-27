@@ -2,6 +2,7 @@ package com.example.whenwillwemeet;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.CalendarView;
 import android.widget.Toast;
@@ -49,20 +50,26 @@ public class GoogleLogin extends AppCompatActivity implements GoogleApiClient.On
                 .addApi(Auth.GOOGLE_SIGN_IN_API,gso)
                 .build();
         mAuth = FirebaseAuth.getInstance();
-    }
 
-    public void onClickLogin(View view){
-        Intent signInIntent = Auth.GoogleSignInApi.getSignInIntent(mGoogleApiClient);
-        startActivityForResult(signInIntent,RC_SIGN_IN);
+        Google_Login = findViewById(R.id.loginButton);
+        Google_Login.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent signInIntent = Auth.GoogleSignInApi.getSignInIntent(mGoogleApiClient);
+                startActivityForResult(signInIntent,RC_SIGN_IN);
+            }
+        });
     }
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
+        Log.e("GoogleLogin","onActivityResult");
         if (requestCode == RC_SIGN_IN) {
             GoogleSignInResult result = Auth.GoogleSignInApi.getSignInResultFromIntent(data);
             if (result.isSuccess()) {
                 GoogleSignInAccount account = result.getSignInAccount();
+                Log.e("GoogleLogin",account.toString());
                 firebaseAuthWithGoogle(account);
             }
             else{
@@ -70,18 +77,15 @@ public class GoogleLogin extends AppCompatActivity implements GoogleApiClient.On
         }
     }
     private void firebaseAuthWithGoogle(GoogleSignInAccount acct){
+        Log.e("GoogleLogin","firebaseAuthWithGoogle");
         AuthCredential credential = GoogleAuthProvider.getCredential(acct.getIdToken(),null);
-        mAuth.signInWithCredential(credential)
-                .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
-                    @Override
-                    public void onComplete(@NonNull Task<AuthResult> task) {
-                        if(!task.isSuccessful()){
-                            Toast.makeText(GoogleLogin.this, "인증 실패", Toast.LENGTH_SHORT).show();
-                        }else{
-                            Toast.makeText(GoogleLogin.this, "구글 로그인 인증 성공", Toast.LENGTH_SHORT).show();
-                        }
-                    }
-                });
+        Log.e("GoogleLogin",acct.getId());
+        Log.e("GoogleLogin",acct.getEmail());
+        Log.e("GoogleLogin",acct.getDisplayName());
+        Log.e("GoogleLogin",acct.getIdToken());
+
+        MainActivity.userName = acct.getDisplayName();
+        finish();
     }
     @Override
     public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {

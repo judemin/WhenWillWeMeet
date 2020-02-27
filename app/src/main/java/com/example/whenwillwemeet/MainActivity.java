@@ -27,29 +27,23 @@ import com.squareup.timessquare.*;
 
 public class MainActivity extends AppCompatActivity {
 
+    public static String userName;
+
     private FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
     private DatabaseReference databaseReference = firebaseDatabase.getReference("message");
     private View mainLayout;
-    public static CalendarPickerView calendarPicker;
+    CalendarPickerView calendarPicker;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         setContentView(R.layout.activity_main);
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
         mainLayout = findViewById(R.id.mainlayout);
         FloatingActionButton fab = findViewById(R.id.fab);
-
-        // 사용자 이름
-        /*
-        Cursor c = getApplication().getContentResolver().query(ContactsContract.Profile.CONTENT_URI, null, null, null, null);
-        c.moveToFirst();
-        databaseReference.setValue((c.getString(c.getColumnIndex("display_name"))));
-        c.close();
-        */
-        //
 
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -67,6 +61,16 @@ public class MainActivity extends AppCompatActivity {
         calendarPicker.init(today, nextYear.getTime())
                 .withSelectedDate(today);
         //
+    }
+
+    @Override
+    public void onResume(){
+        //다른앱에 갔다와도 onResume이 호출됨 => 수정필요
+        super.onResume();
+        if(userName != null)
+            Snackbar.make(mainLayout, "환영합니다 " + userName + "님", Snackbar.LENGTH_LONG).show();
+        else
+            Snackbar.make(mainLayout, "로그인이 필요한 서비스입니다", Snackbar.LENGTH_LONG).show();
     }
 
     @Override
@@ -92,10 +96,6 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void googleLogin(){
-        Snackbar.make(mainLayout, "googleLogin", Snackbar.LENGTH_LONG).show();
-
-
-
         Intent loginIntent = new Intent(getApplicationContext(), GoogleLogin.class);
         startActivity(loginIntent);
     }
