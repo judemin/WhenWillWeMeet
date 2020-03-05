@@ -11,13 +11,15 @@
     <com.squareup.timessquare.CalendarPickerView
         android:id="@+id/calendar_view"
         android:layout_width="412dp"
-        android:layout_height="346dp"
-        android:layout_marginBottom="78dp"
-        app:layout_constraintBottom_toTopOf="@+id/textView"
+        android:layout_height="0dp"
+        android:layout_marginBottom="118dp"
+        app:layout_constraintBottom_toTopOf="@+id/donebutton"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent">
+
+    </com.squareup.timessquare.CalendarPickerView>
 
     <TextView
         android:id="@+id/textView"
@@ -28,6 +30,17 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/calendar_view" />
+
+    <Button
+        android:id="@+id/donebutton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="178dp"
+        android:onClick="getCalendarInfo"
+        android:text="Done"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="@+id/textView"
         app:layout_constraintTop_toBottomOf="@+id/calendar_view" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -1,6 +1,7 @@
 package com.example.whenwillwemeet;
 
 import android.content.Intent;
+import android.net.sip.SipSession;
 import android.net.wifi.hotspot2.pps.Credential;
 import android.os.Bundle;
 
@@ -17,22 +18,30 @@ import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.database.Cursor;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.Exclude;
 import com.google.firebase.database.FirebaseDatabase;
 
+import java.awt.font.NumericShaper;
 import java.util.*;
 import com.squareup.timessquare.*;
 
+import static android.widget.Toast.LENGTH_SHORT;
+
 public class MainActivity extends AppCompatActivity {
 
+    boolean isLogin = false;
     public static String userName;
+    String inviteCode;
 
     private FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
     private DatabaseReference databaseReference = firebaseDatabase.getReference("message");
     private View mainLayout;
     CalendarPickerView calendarPicker;
+    FloatingActionButton fab;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,8 +52,7 @@ public class MainActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
 
         mainLayout = findViewById(R.id.mainlayout);
-        FloatingActionButton fab = findViewById(R.id.fab);
-
+        fab = findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -59,17 +67,29 @@ public class MainActivity extends AppCompatActivity {
         calendarPicker = (CalendarPickerView) findViewById(R.id.calendar_view);
         Date today = new Date();
         calendarPicker.init(today, nextYear.getTime())
-                .withSelectedDate(today);
+                .inMode(CalendarPickerView.SelectionMode.MULTIPLE);
         //
+        googleLogin();
     }
 
     @Override
     public void onResume(){
-        //다른앱에 갔다와도 onResume이 호출됨 => 수정필요
         super.onResume();
-        if(userName != null)
+        if(userName != null && isLogin == false) {
+            //로그인 성공시 실행
+            isLogin = true;
             Snackbar.make(mainLayout, "환영합니다 " + userName + "님", Snackbar.LENGTH_LONG).show();
-        else
+            fab.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    searchRoom();
+                }
+            });
+            inviteCode = randomString();
+            TextView tv = findViewById(R.id.textView);
+            tv.setText(inviteCode);
+        }
+        else if(userName == null)
             Snackbar.make(mainLayout, "로그인이 필요한 서비스입니다", Snackbar.LENGTH_LONG).show();
     }
 
@@ -82,12 +102,9 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
 
-        //noinspection SimplifiableIfStatement
+        //설정 눌렀을때 실행
         if (id == R.id.action_settings) {
             return true;
         }
@@ -96,9 +113,34 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void googleLogin(){
-        Intent loginIntent = new Intent(getApplicationContext(), GoogleLogin.class);
-        startActivity(loginIntent);
+        Intent newItent = new Intent(getApplicationContext(), GoogleLogin.class);
+        startActivity(newItent);
     }
 
+    public void searchRoom(){
+        Intent newItent = new Intent(getApplicationContext(), SearchRoom.class);
+        startActivity(newItent);
+    }
+
+    int dateCnt = 0;
+    Date [] unAvailableDates = new Date[367];
+    public void getCalendarInfo(View view){
+        dateCnt = calendarPicker.getSelectedDates().toArray().length;
+        for(int i = 0;i < dateCnt;i++) {
+            unAvailableDates[i] = calendarPicker.getSelectedDates().get(i);
+            Log.e("MainActivity", "" + unAvailableDates[i]);
+        }
+    }
+
+    public static String randomString() {
+        Random generator = new Random();
+        StringBuilder randomStringBuilder = new StringBuilder();
+        char tempChar;
+        for (int i = 0; i < 10; i++){
+            tempChar = (char) (generator.nextInt(25) + 65);
+            randomStringBuilder.append(tempChar);
+        }
+        return randomStringBuilder.toString();
+    }
 
 }

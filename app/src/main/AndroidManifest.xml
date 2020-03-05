@@ -17,7 +17,8 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".GoogleLogin"></activity>
+        <activity android:name=".SearchRoom"></activity>
+        <activity android:name=".GoogleLogin" />
         <activity
             android:name=".MainActivity"
             android:label="@string/app_name"

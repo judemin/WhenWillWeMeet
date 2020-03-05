@@ -32,6 +32,6 @@
         android:layout_margin="@dimen/fab_margin"
         app:backgroundTint="#ADD1FC"
         app:rippleColor="#00FFFFFF"
-        app:srcCompat="@drawable/login_icon" />
+        app:srcCompat="@drawable/search_icon" />
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>
