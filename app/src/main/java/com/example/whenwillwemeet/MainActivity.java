@@ -18,6 +18,7 @@ import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.database.Cursor;
+import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -33,15 +34,18 @@ import static android.widget.Toast.LENGTH_SHORT;
 
 public class MainActivity extends AppCompatActivity {
 
+    roomClass newRoom = new roomClass();
+
     boolean isLogin = false;
     public static String userName;
     String inviteCode;
 
     private FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
-    private DatabaseReference databaseReference = firebaseDatabase.getReference("message");
+    private DatabaseReference databaseReference;
     private View mainLayout;
     CalendarPickerView calendarPicker;
     FloatingActionButton fab;
+    TextView logTextView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -59,6 +63,7 @@ public class MainActivity extends AppCompatActivity {
                 googleLogin();
             }
         });
+        logTextView = findViewById(R.id.textView);
 
         // Calendar
         Calendar nextYear = Calendar.getInstance();
@@ -85,9 +90,6 @@ public class MainActivity extends AppCompatActivity {
                     searchRoom();
                 }
             });
-            inviteCode = randomString();
-            TextView tv = findViewById(R.id.textView);
-            tv.setText(inviteCode);
         }
         else if(userName == null)
             Snackbar.make(mainLayout, "로그인이 필요한 서비스입니다", Snackbar.LENGTH_LONG).show();
@@ -120,6 +122,12 @@ public class MainActivity extends AppCompatActivity {
     public void searchRoom(){
         Intent newItent = new Intent(getApplicationContext(), SearchRoom.class);
         startActivity(newItent);
+    }
+
+    public void createRoom(View view){
+        ((Button) findViewById(R.id.createRoomButton)).setEnabled(false);
+        inviteCode = randomString();
+        logTextView.setText(inviteCode);
     }
 
     int dateCnt = 0;
