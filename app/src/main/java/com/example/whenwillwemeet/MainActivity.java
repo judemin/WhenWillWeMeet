@@ -1,6 +1,7 @@
 package com.example.whenwillwemeet;
 
 import android.content.Intent;
+import android.graphics.Color;
 import android.net.sip.SipSession;
 import android.net.wifi.hotspot2.pps.Credential;
 import android.os.Bundle;
@@ -13,6 +14,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
 import android.provider.ContactsContract;
+import android.text.method.ScrollingMovementMethod;
 import android.util.Log;
 import android.view.View;
 import android.view.Menu;
@@ -40,6 +42,13 @@ public class MainActivity extends AppCompatActivity {
     public static String userName;
     String inviteCode;
 
+    String [] roomMsg = new String [100001];
+    int nowMsgCnt = 0;
+
+    int dateCnt;
+    public Date [] availableDate = new Date[367];
+    public int [][] availableDatesInt = new int[14][33]; // 1월~12월, 1일~31일로 저장됨
+
     private FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
     private DatabaseReference databaseReference;
     private View mainLayout;
@@ -63,16 +72,20 @@ public class MainActivity extends AppCompatActivity {
                 googleLogin();
             }
         });
+
         logTextView = findViewById(R.id.textView);
+        logTextView.setMovementMethod(new ScrollingMovementMethod());
+        logTextView.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                scrollBottom(logTextView);
+                logTextView.postDelayed(this, 100);
+            }
+        }, 100);
 
         // Calendar
-        Calendar nextYear = Calendar.getInstance();
-        nextYear.add(Calendar.YEAR, 1);
-
         calendarPicker = (CalendarPickerView) findViewById(R.id.calendar_view);
-        Date today = new Date();
-        calendarPicker.init(today, nextYear.getTime())
-                .inMode(CalendarPickerView.SelectionMode.MULTIPLE);
+        initCalendar();
         //
         googleLogin();
     }
@@ -120,24 +133,58 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void searchRoom(){
-        Intent newItent = new Intent(getApplicationContext(), SearchRoom.class);
-        startActivity(newItent);
+        Intent newIntent = new Intent(getApplicationContext(), SearchRoom.class);
+        startActivity(newIntent);
     }
 
     public void createRoom(View view){
-        ((Button) findViewById(R.id.createRoomButton)).setEnabled(false);
         inviteCode = randomString();
-        logTextView.setText(inviteCode);
+        addMsg("방을 성공적으로 생성하였습니다. InviteCode : " + inviteCode);
+        ((Button) findViewById(R.id.createRoomButton)).setEnabled(false);
     }
 
-    int dateCnt = 0;
-    Date [] unAvailableDates = new Date[367];
     public void getCalendarInfo(View view){
         dateCnt = calendarPicker.getSelectedDates().toArray().length;
-        for(int i = 0;i < dateCnt;i++) {
-            unAvailableDates[i] = calendarPicker.getSelectedDates().get(i);
-            Log.e("MainActivity", "" + unAvailableDates[i]);
+        if(dateCnt == 0){
+            addMsg("가능한 날짜를 선택해 주세요.");
+            return;
         }
+
+        String text = "";
+        for(int i = 0;i < 13;i++)
+            for(int j = 0;j < 32;j++)
+                availableDatesInt[i][j] = 0;
+        for(int i = 0;i < dateCnt;i++) {
+            Date tmp = calendarPicker.getSelectedDates().get(i);
+            availableDate[i] = tmp;
+            int year = ((tmp.getYear()) % 100) + 2000;
+            int month = tmp.getMonth() + 1;
+            int date = tmp.getDate();
+
+            availableDatesInt[month][date] = 1;
+
+            text += year + "." + month  + "." + date;
+            if(i != dateCnt - 1)
+                text += " / ";
+        }
+        text += "\n총 " + dateCnt + "개의 날짜가 선택되었습니다.";
+        addMsg(text);
+        initCalendar();
+    }
+
+    public void initCalendar(){
+        Calendar nextYear = Calendar.getInstance();
+        nextYear.add(Calendar.YEAR, 1);
+        Date today = new Date();
+
+        calendarPicker.init(today, nextYear.getTime())
+                .inMode(CalendarPickerView.SelectionMode.MULTIPLE);
+    }
+
+    public void addMsg(String tmp){
+        tmp = "[" + userName + "]\n" + tmp + "\n";
+        roomMsg[nowMsgCnt++] = tmp;
+        logTextView.append(tmp);
     }
 
     public static String randomString() {
@@ -151,4 +198,13 @@ public class MainActivity extends AppCompatActivity {
         return randomStringBuilder.toString();
     }
 
+    private void scrollBottom(TextView textView) {
+        int lineTop =  textView.getLayout().getLineTop(textView.getLineCount()) ;
+        int scrollY = lineTop - textView.getHeight();
+        if (scrollY > 0) {
+            textView.scrollTo(0, scrollY);
+        } else {
+            textView.scrollTo(0, 0);
+        }
+    }
 }

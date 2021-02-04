@@ -8,48 +8,92 @@
     tools:context=".MainActivity"
     tools:showIn="@layout/activity_main">
 
-    <com.squareup.timessquare.CalendarPickerView
-        android:id="@+id/calendar_view"
+    <TableLayout
+        android:id="@+id/tableLayout"
         android:layout_width="0dp"
-        android:layout_height="331dp"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
-    </com.squareup.timessquare.CalendarPickerView>
+        <TableRow
+            android:layout_width="350dp"
+            android:layout_height="match_parent">
 
-    <TextView
-        android:id="@+id/textView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="23dp"
-        android:text="Hello World!"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/calendar_view" />
+            <com.squareup.timessquare.CalendarPickerView
+                android:id="@+id/calendar_view"
+                android:layout_width="398dp"
+                android:layout_height="314dp"
+                android:cacheColorHint="#FFFFFF">
 
-    <Button
-        android:id="@+id/donebutton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="29dp"
-        android:layout_marginLeft="29dp"
-        android:layout_marginBottom="27dp"
-        android:onClick="getCalendarInfo"
-        android:text="선택완료"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/createRoomButton" />
+            </com.squareup.timessquare.CalendarPickerView>
+        </TableRow>
 
-    <Button
-        android:id="@+id/createRoomButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="44dp"
-        android:layout_marginLeft="44dp"
-        android:layout_marginBottom="27dp"
-        android:onClick="createRoom"
-        android:text="방 만들기"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
+        <TableRow
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <TextView
+                android:id="@+id/textView"
+                android:layout_width="match_parent"
+                android:layout_height="241dp"
+                android:scrollbars="vertical" />
+        </TableRow>
+
+        <TableRow
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="horizontal">
+
+                <EditText
+                    android:id="@+id/messageInp"
+                    android:layout_width="320dp"
+                    android:layout_height="50dp"
+                    android:ems="10"
+                    android:importantForAutofill="no"
+                    android:inputType="textPersonName" />
+
+                <Button
+                    android:id="@+id/send"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:text="입력" />
+            </LinearLayout>
+
+        </TableRow>
+
+        <TableRow
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="horizontal">
+
+                <Button
+                    android:id="@+id/createRoomButton"
+                    android:layout_width="125dp"
+                    android:layout_height="wrap_content"
+                    android:onClick="createRoom"
+                    android:text="방 만들기" />
+
+                <Button
+                    android:id="@+id/donebutton"
+                    android:layout_width="120dp"
+                    android:layout_height="wrap_content"
+                    android:onClick="getCalendarInfo"
+                    android:text="선택완료" />
+
+            </LinearLayout>
+
+        </TableRow>
+
+    </TableLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
