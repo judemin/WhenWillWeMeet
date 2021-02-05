@@ -24,6 +24,9 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.firebase.database.ChildEventListener;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.Exclude;
 import com.google.firebase.database.FirebaseDatabase;
@@ -36,13 +39,13 @@ import static android.widget.Toast.LENGTH_SHORT;
 
 public class MainActivity extends AppCompatActivity {
 
-    roomClass newRoom = new roomClass();
+    roomClass nowRoom = new roomClass();
 
     boolean isLogin = false;
     public static String userName;
-    String inviteCode;
+    String inviteCode = null;
 
-    String [] roomMsg = new String [100001];
+    String [] roomMsg = new String [1000001];
     int nowMsgCnt = 0;
 
     int dateCnt;
@@ -51,6 +54,8 @@ public class MainActivity extends AppCompatActivity {
 
     private FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
     private DatabaseReference databaseReference;
+    private ChildEventListener mChildEventListener;
+
     private View mainLayout;
     CalendarPickerView calendarPicker;
     FloatingActionButton fab;
@@ -109,6 +114,24 @@ public class MainActivity extends AppCompatActivity {
     }
 
     @Override
+    public void onDestroy(){
+        super.onDestroy();
+        databaseReference.removeEventListener(mChildEventListener);
+        DatabaseReference mPostReference = FirebaseDatabase.getInstance().getReference()
+                .child("" + nowRoom.inviteCode).child(nowRoom.firebaseKey);
+        mPostReference.removeValue();
+    }
+
+    // 사용자 초기 로그인 관련 함수 (카카오 등 추가 예정)
+
+    public void googleLogin(){
+        Intent newItent = new Intent(getApplicationContext(), GoogleLogin.class);
+        startActivity(newItent);
+    }
+
+    // 메뉴 선택 관련 함수
+
+    @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_main, menu);
@@ -127,10 +150,7 @@ public class MainActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    public void googleLogin(){
-        Intent newItent = new Intent(getApplicationContext(), GoogleLogin.class);
-        startActivity(newItent);
-    }
+    // 방을 만들기, 입장하기 관련 함수
 
     public void searchRoom(){
         Intent newIntent = new Intent(getApplicationContext(), SearchRoom.class);
@@ -139,14 +159,75 @@ public class MainActivity extends AppCompatActivity {
 
     public void createRoom(View view){
         inviteCode = randomString();
-        addMsg("방을 성공적으로 생성하였습니다. InviteCode : " + inviteCode);
-        ((Button) findViewById(R.id.createRoomButton)).setEnabled(false);
+
+        List nameList = new ArrayList<String>(Arrays.asList(roomMsg));
+
+        nowRoom.inviteCode = this.inviteCode;
+        nowRoom.adminIdx = 0;
+        nowRoom.members = new ArrayList<String>();
+        nowRoom.messages = new ArrayList<String>(Arrays.asList(roomMsg));
+        nowRoom.memberDates = new ArrayList<Date>();
+
+        nowRoom.members.add(userName);
+
+        try {
+            initFirebaseDatabase();
+            databaseReference.push().setValue(nowRoom);
+            addMsg("방을 성공적으로 생성하였습니다. InviteCode : " + inviteCode,false);
+            ((Button) findViewById(R.id.createRoomButton)).setEnabled(false);
+        }catch(Exception e){
+            addLocMsg("오류가 발생하였습니다.");
+            Log.e("createRoom","" + e);
+        }
     }
+
+    // 데이터베이스 관련 함수
+
+    private void initFirebaseDatabase() {
+        if(inviteCode == null){
+            addLocMsg("방을 만들거나 방에 입장해주세요.");
+            return;
+        }
+
+        databaseReference = firebaseDatabase.getReference("" + inviteCode);
+        mChildEventListener = new ChildEventListener() {
+
+            public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+                nowRoom.firebaseKey = dataSnapshot.getKey();
+            }
+
+            @Override
+            public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+                roomClass tmp = dataSnapshot.getValue(roomClass.class);
+                int msgCnt = tmp.messages.size();
+                if(msgCnt != nowMsgCnt)
+                    for(int i = nowMsgCnt;i < msgCnt;i++)
+                        addMsg(tmp.messages.get(i).toString(),true);
+            }
+
+            @Override
+            public void onChildRemoved(DataSnapshot dataSnapshot) {
+                inviteCode = null;
+                addLocMsg("방이 닫혔습니다.");
+            }
+
+            @Override
+            public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+            }
+        };
+        databaseReference.addChildEventListener(mChildEventListener);
+    }
+
+    // 캘린더 뷰, 처리 관련 함수
 
     public void getCalendarInfo(View view){
         dateCnt = calendarPicker.getSelectedDates().toArray().length;
         if(dateCnt == 0){
-            addMsg("가능한 날짜를 선택해 주세요.");
+            addLocMsg("가능한 날짜를 선택해 주세요.");
             return;
         }
 
@@ -168,7 +249,7 @@ public class MainActivity extends AppCompatActivity {
                 text += " / ";
         }
         text += "\n총 " + dateCnt + "개의 날짜가 선택되었습니다.";
-        addMsg(text);
+        addLocMsg(text);
         initCalendar();
     }
 
@@ -181,11 +262,21 @@ public class MainActivity extends AppCompatActivity {
                 .inMode(CalendarPickerView.SelectionMode.MULTIPLE);
     }
 
-    public void addMsg(String tmp){
-        tmp = "[" + userName + "]\n" + tmp + "\n";
+    // 텍스트뷰 메세지 기록 관련 함수
+
+    public void addMsg(String tmp,boolean isOther){
+        if(isOther == false)
+            tmp = "[" + userName + "]\n" + tmp + "\n";
         roomMsg[nowMsgCnt++] = tmp;
         logTextView.append(tmp);
     }
+
+    public void addLocMsg(String tmp){
+        tmp = "[ log ]\n" + tmp + "\n";
+        logTextView.append(tmp);
+    }
+
+    // 기타 함수
 
     public static String randomString() {
         Random generator = new Random();
