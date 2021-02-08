@@ -62,6 +62,7 @@
                     android:id="@+id/send"
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
+                    android:onClick="editTextSendMsg"
                     android:text="입력" />
             </LinearLayout>
 

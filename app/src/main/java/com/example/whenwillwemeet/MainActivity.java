@@ -21,6 +21,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.database.Cursor;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -40,6 +41,7 @@ import static android.widget.Toast.LENGTH_SHORT;
 public class MainActivity extends AppCompatActivity {
 
     roomClass nowRoom = new roomClass();
+    private String fbKey;
     private ArrayList<String> members;
     private ArrayList<Date> memberDates;
     private ArrayList<String> messages;
@@ -61,6 +63,7 @@ public class MainActivity extends AppCompatActivity {
     CalendarPickerView calendarPicker;
     FloatingActionButton fab;
     TextView logTextView;
+    EditText msgEditText;
 
     // 생명주기 관련 함수
 
@@ -95,6 +98,8 @@ public class MainActivity extends AppCompatActivity {
             }
         }, 100);
 
+        msgEditText = findViewById(R.id.messageInp);
+
         // Calendar
         calendarPicker = (CalendarPickerView) findViewById(R.id.calendar_view);
         initCalendar();
@@ -126,7 +131,7 @@ public class MainActivity extends AppCompatActivity {
 
         if(mChildEventListener != null) {
             DatabaseReference mPostReference = FirebaseDatabase.getInstance().getReference()
-                    .child("" + nowRoom.inviteCode).child(nowRoom.firebaseKey);
+                    .child("" + nowRoom.inviteCode);
             mPostReference.removeValue();
             databaseReference.removeEventListener(mChildEventListener);
         }
@@ -171,7 +176,6 @@ public class MainActivity extends AppCompatActivity {
         inviteCode = randomString();
 
         nowRoom.inviteCode = this.inviteCode;
-        nowRoom.adminIdx = 0;
 
         try {
             initFirebaseDatabase();
@@ -197,18 +201,18 @@ public class MainActivity extends AppCompatActivity {
         mChildEventListener = new ChildEventListener() {
 
             public void onChildAdded(DataSnapshot dataSnapshot, String s) {
-                if(nowRoom.firebaseKey != null)
+                if(fbKey != null)
                     return;
 
-                nowRoom.firebaseKey = dataSnapshot.getKey();
-                databaseReference.child(nowRoom.firebaseKey).child("firebaseKey").setValue(nowRoom.firebaseKey);
+                fbKey = dataSnapshot.getKey();
+                databaseReference.child("key").setValue(fbKey);
 
-                databaseReference.child(nowRoom.firebaseKey).push().child("members");
-                databaseReference.child(nowRoom.firebaseKey).push().child("memberDates");
-                databaseReference.child(nowRoom.firebaseKey).push().child("messages");
+                databaseReference.child(fbKey).push().child("members");
+                databaseReference.child(fbKey).push().child("memberDates");
+                databaseReference.child(fbKey).push().child("messages");
 
                 //int len = members.size();
-                databaseReference.child(nowRoom.firebaseKey).child("members").child("0").setValue(""+userName);
+                databaseReference.child(fbKey).child("members").child("0").setValue(""+userName);
                 members.add(userName);
 
                 insertMsg("방을 성공적으로 생성하였습니다. InviteCode : " + inviteCode);
@@ -251,7 +255,7 @@ public class MainActivity extends AppCompatActivity {
     public void getCalendarInfo(View view){
         dateCnt = calendarPicker.getSelectedDates().toArray().length;
         if(dateCnt == 0){
-            addToLoc("가능한 날짜를 선택해 주세요.",false);
+            addToLoc("가능한 날짜를 선택해 주세요.",true);
             return;
         }
 
@@ -273,7 +277,7 @@ public class MainActivity extends AppCompatActivity {
                 text += " / ";
         }
         text += "\n총 " + dateCnt + "개의 날짜가 선택되었습니다.";
-        addToLoc(text,false);
+        addToLoc(text,true);
         initCalendar();
     }
 
@@ -286,12 +290,31 @@ public class MainActivity extends AppCompatActivity {
                 .inMode(CalendarPickerView.SelectionMode.MULTIPLE);
     }
 
-    // 텍스트뷰 메세지 기록 관련 함수
+    // 채팅, 택스트뷰 관련 함수
+
+    public void editTextSendMsg(View view){
+        String tmp = msgEditText.getText().toString();
+
+        // 테스트용 이름 바꾸기
+        if(tmp.charAt(0) == '!' && tmp.charAt(1) == '&' && tmp.charAt(2) == '!'){
+            userName = "";
+            for(int i = 3;i < tmp.length();i++)
+                userName += tmp.charAt(i);
+        }
+
+        msgEditText.setText("");
+        insertMsg(tmp);
+    }
 
     public void insertMsg(String tmp){
         tmp = "[" + userName + "]\n" + tmp + "\n";
         int len = messages.size();
-        databaseReference.child(nowRoom.firebaseKey).child("messages").child(""+len).setValue(""+tmp);
+        try {
+            databaseReference.child(fbKey).child("messages").child("" + len).setValue("" + tmp);
+        }catch(Exception e){
+            addToLoc("오류가 발생하였습니다. 네트워크를 확인해주세요",true);
+            Log.e("insertMsg","" + e);
+        }
     }
 
     public void addToLoc(String tmp,boolean isLog){

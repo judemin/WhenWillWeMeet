@@ -4,10 +4,8 @@ import java.util.*;
 import java.util.Date;
 
 public class roomClass {
-    public String firebaseKey;
     public String inviteCode; //초대코드
-    public int adminIdx; //방장의 index는 항상 0번
-    public List<String> members;
+    public List<String> members; // 방장의 index는 항장 0번
     public List<Date> memberDates;
     public List<String> messages;
 }
