@@ -40,14 +40,15 @@ import static android.widget.Toast.LENGTH_SHORT;
 public class MainActivity extends AppCompatActivity {
 
     roomClass nowRoom = new roomClass();
+    private ArrayList<String> members;
+    private ArrayList<Date> memberDates;
+    private ArrayList<String> messages;
 
     boolean isLogin = false;
-    public static String userName;
+    public static String userName = null;
     String inviteCode = null;
 
-    String [] roomMsg = new String [1000001];
-    int nowMsgCnt = 0;
-
+    // availableDate와 memberDates 수정 필요
     int dateCnt;
     public Date [] availableDate = new Date[367];
     public int [][] availableDatesInt = new int[14][33]; // 1월~12월, 1일~31일로 저장됨
@@ -61,9 +62,15 @@ public class MainActivity extends AppCompatActivity {
     FloatingActionButton fab;
     TextView logTextView;
 
+    // 생명주기 관련 함수
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        members = new ArrayList<String>();
+        messages = new ArrayList<String>();
+        memberDates = new ArrayList<Date>();
 
         setContentView(R.layout.activity_main);
         Toolbar toolbar = findViewById(R.id.toolbar);
@@ -116,13 +123,16 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public void onDestroy(){
         super.onDestroy();
-        databaseReference.removeEventListener(mChildEventListener);
-        DatabaseReference mPostReference = FirebaseDatabase.getInstance().getReference()
-                .child("" + nowRoom.inviteCode).child(nowRoom.firebaseKey);
-        mPostReference.removeValue();
+
+        if(mChildEventListener != null) {
+            DatabaseReference mPostReference = FirebaseDatabase.getInstance().getReference()
+                    .child("" + nowRoom.inviteCode).child(nowRoom.firebaseKey);
+            mPostReference.removeValue();
+            databaseReference.removeEventListener(mChildEventListener);
+        }
     }
 
-    // 사용자 초기 로그인 관련 함수 (카카오 등 추가 예정)
+    // 사용자 초기 로그인 관련 함수 (카카오톡 등 추가 예정)
 
     public void googleLogin(){
         Intent newItent = new Intent(getApplicationContext(), GoogleLogin.class);
@@ -160,23 +170,14 @@ public class MainActivity extends AppCompatActivity {
     public void createRoom(View view){
         inviteCode = randomString();
 
-        List nameList = new ArrayList<String>(Arrays.asList(roomMsg));
-
         nowRoom.inviteCode = this.inviteCode;
         nowRoom.adminIdx = 0;
-        nowRoom.members = new ArrayList<String>();
-        nowRoom.messages = new ArrayList<String>(Arrays.asList(roomMsg));
-        nowRoom.memberDates = new ArrayList<Date>();
-
-        nowRoom.members.add(userName);
 
         try {
             initFirebaseDatabase();
-            databaseReference.push().setValue(nowRoom);
-            addMsg("방을 성공적으로 생성하였습니다. InviteCode : " + inviteCode,false);
             ((Button) findViewById(R.id.createRoomButton)).setEnabled(false);
         }catch(Exception e){
-            addLocMsg("오류가 발생하였습니다.");
+            addToLoc("오류가 발생하였습니다. 네트워크를 확인해주세요",true);
             Log.e("createRoom","" + e);
         }
     }
@@ -185,7 +186,10 @@ public class MainActivity extends AppCompatActivity {
 
     private void initFirebaseDatabase() {
         if(inviteCode == null){
-            addLocMsg("방을 만들거나 방에 입장해주세요.");
+            addToLoc("방을 만들거나 방에 입장해주세요.",true);
+            return;
+        }else if(userName == null){
+            addToLoc("로그인이 필요한 서비스입니다.",true);
             return;
         }
 
@@ -193,22 +197,41 @@ public class MainActivity extends AppCompatActivity {
         mChildEventListener = new ChildEventListener() {
 
             public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+                if(nowRoom.firebaseKey != null)
+                    return;
+
                 nowRoom.firebaseKey = dataSnapshot.getKey();
+                databaseReference.child(nowRoom.firebaseKey).child("firebaseKey").setValue(nowRoom.firebaseKey);
+
+                databaseReference.child(nowRoom.firebaseKey).push().child("members");
+                databaseReference.child(nowRoom.firebaseKey).push().child("memberDates");
+                databaseReference.child(nowRoom.firebaseKey).push().child("messages");
+
+                //int len = members.size();
+                databaseReference.child(nowRoom.firebaseKey).child("members").child("0").setValue(""+userName);
+                members.add(userName);
+
+                insertMsg("방을 성공적으로 생성하였습니다. InviteCode : " + inviteCode);
             }
 
             @Override
             public void onChildChanged(DataSnapshot dataSnapshot, String s) {
-                roomClass tmp = dataSnapshot.getValue(roomClass.class);
-                int msgCnt = tmp.messages.size();
-                if(msgCnt != nowMsgCnt)
-                    for(int i = nowMsgCnt;i < msgCnt;i++)
-                        addMsg(tmp.messages.get(i).toString(),true);
+                roomClass tmp = (roomClass) dataSnapshot.getValue(roomClass.class);
+
+                if(tmp.messages != null) {
+                    int st = messages.size();
+                    int ed = tmp.messages.size();
+                    for (int i = st; i < ed; i++) {
+                        messages.add(tmp.messages.get(i));
+                        addToLoc(tmp.messages.get(i), false);
+                    }
+                }
             }
 
             @Override
             public void onChildRemoved(DataSnapshot dataSnapshot) {
                 inviteCode = null;
-                addLocMsg("방이 닫혔습니다.");
+                addToLoc("방장이 방을 닫았습니다.",true);
             }
 
             @Override
@@ -220,6 +243,7 @@ public class MainActivity extends AppCompatActivity {
             }
         };
         databaseReference.addChildEventListener(mChildEventListener);
+        databaseReference.push().setValue(nowRoom);
     }
 
     // 캘린더 뷰, 처리 관련 함수
@@ -227,7 +251,7 @@ public class MainActivity extends AppCompatActivity {
     public void getCalendarInfo(View view){
         dateCnt = calendarPicker.getSelectedDates().toArray().length;
         if(dateCnt == 0){
-            addLocMsg("가능한 날짜를 선택해 주세요.");
+            addToLoc("가능한 날짜를 선택해 주세요.",false);
             return;
         }
 
@@ -249,7 +273,7 @@ public class MainActivity extends AppCompatActivity {
                 text += " / ";
         }
         text += "\n총 " + dateCnt + "개의 날짜가 선택되었습니다.";
-        addLocMsg(text);
+        addToLoc(text,false);
         initCalendar();
     }
 
@@ -264,16 +288,19 @@ public class MainActivity extends AppCompatActivity {
 
     // 텍스트뷰 메세지 기록 관련 함수
 
-    public void addMsg(String tmp,boolean isOther){
-        if(isOther == false)
-            tmp = "[" + userName + "]\n" + tmp + "\n";
-        roomMsg[nowMsgCnt++] = tmp;
-        logTextView.append(tmp);
+    public void insertMsg(String tmp){
+        tmp = "[" + userName + "]\n" + tmp + "\n";
+        int len = messages.size();
+        databaseReference.child(nowRoom.firebaseKey).child("messages").child(""+len).setValue(""+tmp);
     }
 
-    public void addLocMsg(String tmp){
-        tmp = "[ log ]\n" + tmp + "\n";
-        logTextView.append(tmp);
+    public void addToLoc(String tmp,boolean isLog){
+        if(isLog == true){
+            tmp = "[ log ]\n" + tmp + "\n";
+            logTextView.append(tmp);
+        }
+        else
+            logTextView.append(tmp);
     }
 
     // 기타 함수
