@@ -2,17 +2,12 @@ package com.mong.whenwillwemeet
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
 import android.widget.Button
 import android.widget.EditText
 import java.util.*
 
 class MainActivity : AppCompatActivity() {
-
-    private val _editText : EditText = findViewById(R.id.main_et)
-    private val _loginBtn : Button = findViewById(R.id.main_loginBtn)
-    private val _googleBtn : Button = findViewById(R.id.main_googleBtn)
-    private val _kakaoBtn : Button = findViewById(R.id.main_kakaoBtn)
-
     var inpName = "";
     var personalID = "";
 
@@ -20,11 +15,17 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        _loginBtn.setOnClickListener {
-            inpName = _editText.text.toString()
+        val editText : EditText = findViewById(R.id.main_et)
+        val loginBtn : Button = findViewById(R.id.main_loginBtn)
+        val _googleBtn : Button = findViewById(R.id.main_googleBtn)
+        val _kakaoBtn : Button = findViewById(R.id.main_kakaoBtn)
 
-            if(!inpName.equals("")) {
+        loginBtn.setOnClickListener {
+            inpName = editText.text.toString()
+
+            if(!inpName.equals("") && inpName != null) {
                 personalID = createID()
+                finish()
             }
         }
     }

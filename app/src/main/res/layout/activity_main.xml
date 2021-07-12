@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".MainActivity"
-    android:background="#ffffff">
+    android:background="@color/white">
 
     <ImageView
         android:id="@+id/main_iv"
@@ -44,6 +44,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:layout_weight="9"
+                android:maxLength="10"
+                android:hint="맞다 너, 이름이 뭐였더라?"
                 />
 
             <Button
