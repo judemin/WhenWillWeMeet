@@ -1,11 +1,14 @@
 package com.mong.whenwillwemeet
 
+import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import android.widget.Button
 import android.widget.EditText
 import java.util.*
+import android.view.View
+
 
 class MainActivity : AppCompatActivity() {
     var inpName = "";
@@ -23,8 +26,14 @@ class MainActivity : AppCompatActivity() {
         loginBtn.setOnClickListener {
             inpName = editText.text.toString()
 
-            if(!inpName.equals("") && inpName != null) {
+            if (!inpName.equals("") && inpName != null) {
                 personalID = createID()
+
+                val intent = Intent(this, ModeActivity::class.java)
+                intent.putExtra("pid", personalID)
+                intent.putExtra("name", inpName)
+                startActivity(intent)
+
                 finish()
             }
         }

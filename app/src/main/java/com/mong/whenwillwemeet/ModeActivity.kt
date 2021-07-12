@@ -6,7 +6,11 @@ import androidx.appcompat.app.AppCompatActivity
 
 class ModeActivity : AppCompatActivity() {
 
+    var pid = ""
+    var name = ""
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        setContentView(R.layout.actibity_mode)
     }
 }
