@@ -28,6 +28,7 @@ class ModeActivity : AppCompatActivity() {
 
         val createBtn : Button = findViewById(R.id.mode_createBtn)
         val findBtn : Button = findViewById(R.id.mode_findBtn)
+
         createBtn.setOnClickListener {
             val intent = Intent(this, CreateRoomActivity::class.java)
             intent.putExtra("pid", pid)
