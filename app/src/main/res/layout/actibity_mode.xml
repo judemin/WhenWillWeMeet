@@ -35,7 +35,7 @@
             android:id="@+id/mode_createBtn"
             android:layout_width="match_parent"
             android:layout_height="50dp"
-            android:text="약속 잡기"
+            android:text="약속 잡을까?"
             />
 
         <Button
@@ -43,7 +43,7 @@
             android:layout_width="match_parent"
             android:layout_height="50dp"
             android:layout_marginTop="25dp"
-            android:text="약속 찾기"
+            android:text="약속 찾을래?"
             />
 
     </LinearLayout>

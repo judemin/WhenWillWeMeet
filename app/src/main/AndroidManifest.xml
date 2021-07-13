@@ -17,6 +17,7 @@
             </intent-filter>
         </activity>
         <activity android:name=".ModeActivity"/>
+        <activity android:name=".CreateRoomActivity"/>
     </application>
 
 </manifest>

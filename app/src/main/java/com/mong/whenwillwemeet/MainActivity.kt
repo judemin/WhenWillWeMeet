@@ -41,7 +41,6 @@ class MainActivity : AppCompatActivity() {
 
         googleBtn.setOnClickListener{
             Toast.makeText(applicationContext,"준비중인 기능입니다",Toast.LENGTH_SHORT).show()
-
         }
 
         kakaoBtn.setOnClickListener{
