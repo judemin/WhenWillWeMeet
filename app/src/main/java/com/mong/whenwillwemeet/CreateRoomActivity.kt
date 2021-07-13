@@ -2,7 +2,7 @@ package com.mong.whenwillwemeet
 
 import android.os.Bundle
 import android.os.PersistableBundle
-import android.widget.TextView
+import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
 
 class CreateRoomActivity : AppCompatActivity() {
@@ -25,5 +25,20 @@ class CreateRoomActivity : AppCompatActivity() {
 
         val codeTextView : TextView = findViewById(R.id.createRoom_codeTV)
         codeTextView.setText("" + pid)
+
+        ///roomInfo와 방 생성 버튼 터치시 이벤트 처리
+        val nowRoomInfo : RoomInfo = RoomInfo()
+        nowRoomInfo._roomID = pid.toString()
+        nowRoomInfo._admin = name.toString()
+
+        val roomCreateBtn : Button = findViewById(R.id.createRoom_makeRoomBtn)
+        roomCreateBtn.setOnClickListener {
+            val passwdET : EditText = findViewById(R.id.createRoom_passwdET)
+            val startDateP : DatePicker = findViewById(R.id.createRoom_stDateDP)
+            val endDateP : DatePicker = findViewById(R.id.createRoom_edDateDP)
+            val locationET : EditText = findViewById(R.id.createRoom_locationET)
+            val multiSwitch : Switch = findViewById(R.id.createRoom_switchBtn)
+            val noticeET : EditText = findViewById(R.id.createRoom_noticeET)
+        }
     }
 }
