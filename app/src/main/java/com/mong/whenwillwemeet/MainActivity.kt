@@ -8,6 +8,7 @@ import android.widget.Button
 import android.widget.EditText
 import java.util.*
 import android.view.View
+import android.widget.Toast
 
 
 class MainActivity : AppCompatActivity() {
@@ -20,8 +21,8 @@ class MainActivity : AppCompatActivity() {
 
         val editText : EditText = findViewById(R.id.main_et)
         val loginBtn : Button = findViewById(R.id.main_loginBtn)
-        val _googleBtn : Button = findViewById(R.id.main_googleBtn)
-        val _kakaoBtn : Button = findViewById(R.id.main_kakaoBtn)
+        val googleBtn : Button = findViewById(R.id.main_googleBtn)
+        val kakaoBtn : Button = findViewById(R.id.main_kakaoBtn)
 
         loginBtn.setOnClickListener {
             inpName = editText.text.toString()
@@ -36,6 +37,15 @@ class MainActivity : AppCompatActivity() {
 
                 finish()
             }
+        }
+
+        googleBtn.setOnClickListener{
+            Toast.makeText(applicationContext,"준비중인 기능입니다",Toast.LENGTH_SHORT).show()
+
+        }
+
+        kakaoBtn.setOnClickListener{
+            Toast.makeText(applicationContext,"준비중인 기능입니다",Toast.LENGTH_SHORT).show()
         }
     }
 
