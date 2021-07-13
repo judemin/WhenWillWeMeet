@@ -22,28 +22,51 @@
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="300dp"
+        android:layout_height="wrap_content"
         app:layout_constraintTop_toBottomOf="@id/mode_iv"
         app:layout_constraintBottom_toBottomOf="parent"
         android:orientation="vertical"
         android:layout_marginLeft="40dp"
         android:layout_marginRight="40dp"
         android:layout_marginTop="80dp"
+        android:layout_marginBottom="150dp"
         >
 
-        <Button
-            android:id="@+id/mode_createBtn"
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="약속 코드 입력"
+            android:textSize="8sp"
+            android:layout_marginLeft="3dp"
+            />
+
+        <EditText
             android:layout_width="match_parent"
-            android:layout_height="50dp"
-            android:text="약속 잡을까?"
+            android:layout_height="wrap_content"
+
             />
 
         <Button
             android:id="@+id/mode_findBtn"
             android:layout_width="match_parent"
             android:layout_height="50dp"
-            android:layout_marginTop="25dp"
             android:text="약속 찾을래?"
+            />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:layout_marginBottom="10dp"
+            android:text="아님"
+            android:layout_gravity="center"
+            />
+
+        <Button
+            android:id="@+id/mode_createBtn"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:text="약속 잡을까?"
             />
 
     </LinearLayout>
