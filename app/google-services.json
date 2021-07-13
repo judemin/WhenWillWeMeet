@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "739982496607",
+    "project_id": "whenwillwemeet-bb25f",
+    "storage_bucket": "whenwillwemeet-bb25f.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:739982496607:android:e4f1339d1aa71cb94c9cea",
+        "android_client_info": {
+          "package_name": "com.mong.whenwillwemeet"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "739982496607-kifl2ivuvghhvlq1gessnkem685orks2.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.mong.whenwillwemeet",
+            "certificate_hash": "6b98489b499fe5aba87ef993500545b4118c4574"
+          }
+        },
+        {
+          "client_id": "739982496607-li9v13c38838kahd8c418fh4b0tl18lp.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD4Nf2uGIiwZ-u1TpLDRHc3UoAcODRXhMk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "739982496607-li9v13c38838kahd8c418fh4b0tl18lp.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.os.PersistableBundle
 import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
+import com.google.firebase.ktx.Firebase
 
 class CreateRoomActivity : AppCompatActivity() {
 
@@ -26,7 +27,10 @@ class CreateRoomActivity : AppCompatActivity() {
         val codeTextView : TextView = findViewById(R.id.createRoom_codeTV)
         codeTextView.setText("" + pid)
 
-        ///roomInfo와 방 생성 버튼 터치시 이벤트 처리
+        private lateinit var database: DatabaseReference
+        Firebase.database
+
+        /// roomInfo와 방 생성 버튼 터치시 이벤트 처리 ///
         val nowRoomInfo : RoomInfo = RoomInfo()
         nowRoomInfo._roomID = pid.toString()
         nowRoomInfo._admin = name.toString()
