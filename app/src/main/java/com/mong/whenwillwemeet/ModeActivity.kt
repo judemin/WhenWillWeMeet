@@ -10,17 +10,17 @@ import androidx.appcompat.app.AppCompatActivity
 
 class ModeActivity : AppCompatActivity() {
 
-    var pid : String? = ""
-    var name : String? = ""
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.actibity_mode)
 
+        var nowUser : userInfo = userInfo()
         if(intent.hasExtra("pid"))
-            pid = intent.getStringExtra("pid")
+            nowUser.pid = intent.getStringExtra("pid")
         if(intent.hasExtra("name"))
-            name = intent.getStringExtra("name")
+            nowUser.name = intent.getStringExtra("name")
+
+
 
         val actionBar = supportActionBar
         if (actionBar != null)
@@ -31,8 +31,7 @@ class ModeActivity : AppCompatActivity() {
 
         createBtn.setOnClickListener {
             val intent = Intent(this, CreateRoomActivity::class.java)
-            intent.putExtra("pid", pid)
-            intent.putExtra("name", name)
+            intent.putExtra("user", nowUser)
             startActivity(intent)
         }
     }
