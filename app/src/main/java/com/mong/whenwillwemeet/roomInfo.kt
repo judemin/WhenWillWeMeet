@@ -4,7 +4,7 @@ import android.os.Parcel
 import android.os.Parcelable
 import java.util.*
 
-class RoomInfo() : Parcelable{
+class roomInfo() : Parcelable{
     var _roomID : String = ""
     var _admin : String  = ""
     var _password : String = ""
@@ -36,12 +36,12 @@ class RoomInfo() : Parcelable{
         return 0
     }
 
-    companion object CREATOR : Parcelable.Creator<RoomInfo> {
-        override fun createFromParcel(parcel: Parcel): RoomInfo {
-            return RoomInfo(parcel)
+    companion object CREATOR : Parcelable.Creator<roomInfo> {
+        override fun createFromParcel(parcel: Parcel): roomInfo {
+            return roomInfo(parcel)
         }
 
-        override fun newArray(size: Int): Array<RoomInfo?> {
+        override fun newArray(size: Int): Array<roomInfo?> {
             return arrayOfNulls(size)
         }
     }

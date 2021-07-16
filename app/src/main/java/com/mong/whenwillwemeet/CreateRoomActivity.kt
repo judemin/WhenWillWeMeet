@@ -1,5 +1,6 @@
 package com.mong.whenwillwemeet
 
+import android.content.Intent
 import android.os.Bundle
 import android.os.PersistableBundle
 import android.widget.*
@@ -34,7 +35,7 @@ class CreateRoomActivity : AppCompatActivity() {
 
         /// roomInfo와 방 생성 버튼 터치시 이벤트 처리 ///
 
-        val nowRoomInfo : RoomInfo = RoomInfo()
+        val nowRoomInfo : roomInfo = roomInfo()
         nowRoomInfo._roomID = nowUser.pid
         nowRoomInfo._admin = nowUser.name
 
@@ -96,8 +97,13 @@ class CreateRoomActivity : AppCompatActivity() {
                 nowRef.child("messeges").setValue("messeges") // DTO
 
                 /// Intent 이동 ///
-                
 
+                val intent = Intent(this, SelectDayActivity::class.java)
+                intent.putExtra("user", nowUser)
+                intent.putExtra("roomID",nowRoomInfo._roomID)
+                startActivity(intent)
+
+                finish()
             }
         }
     }
