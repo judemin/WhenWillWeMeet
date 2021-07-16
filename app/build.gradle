@@ -48,4 +48,7 @@ dependencies {
     implementation platform('com.google.firebase:firebase-bom:28.2.0')
     implementation 'com.google.firebase:firebase-database'
     implementation 'com.google.firebase:firebase-database-ktx'
+
+    implementation "androidx.recyclerview:recyclerview:1.2.1"
+    implementation "androidx.recyclerview:recyclerview-selection:1.1.0"
 }
