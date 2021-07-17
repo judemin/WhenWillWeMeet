@@ -35,10 +35,15 @@ class SelectDayActivity : AppCompatActivity() {
         val nowRef = database.getReference("" + roomID)
 
         nowRef.child("room").get().addOnSuccessListener {
-            nowRoom = it.getValue(roomInfo::class.java) as roomInfo
+            var tmp : roomInfo = (it.getValue(roomInfo::class.java) as roomInfo)
+            afterRoomSetting(tmp.deepCopy())
         }.addOnFailureListener {
             makeToast("데이터베이스 연결 오류!")
         }
+    }
+
+    fun afterRoomSetting(roomInfoT: roomInfo){
+        nowRoom = roomInfoT
 
         /// Textview 세팅 ///
 

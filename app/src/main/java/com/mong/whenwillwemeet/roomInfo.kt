@@ -2,7 +2,7 @@ package com.mong.whenwillwemeet
 
 import android.os.Parcel
 import android.os.Parcelable
-import java.util.*
+import com.google.gson.Gson
 
 class roomInfo() : Parcelable{
     var _roomID : String = ""
@@ -44,5 +44,10 @@ class roomInfo() : Parcelable{
         override fun newArray(size: Int): Array<roomInfo?> {
             return arrayOfNulls(size)
         }
+    }
+
+    fun deepCopy():roomInfo {
+        val JSON = Gson().toJson(this)
+        return Gson().fromJson(JSON, roomInfo::class.java)
     }
 }
