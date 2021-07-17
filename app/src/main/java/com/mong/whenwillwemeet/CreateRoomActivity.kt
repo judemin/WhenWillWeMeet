@@ -70,8 +70,8 @@ class CreateRoomActivity : AppCompatActivity() {
                 makeToast("날짜를 올바르게 선택해줘!")
             }else {
                 /// 나머지 데이터 세팅 ///
-                nowRoomInfo._startDate = tmpStCal
-                nowRoomInfo._endDate = tmpEdCal
+                nowRoomInfo._startDate = dateClass(tmpStCal)
+                nowRoomInfo._endDate = dateClass(tmpEdCal)
 
                 if (locationET.text.toString().equals(""))
                     nowRoomInfo._location = "온라인"

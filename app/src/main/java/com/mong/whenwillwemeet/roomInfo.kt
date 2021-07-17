@@ -8,8 +8,8 @@ class roomInfo() : Parcelable{
     var _roomID : String = ""
     var _admin : String  = ""
     var _password : String = ""
-    var _startDate : Calendar = Calendar.getInstance()
-    var _endDate : Calendar = Calendar.getInstance()
+    lateinit  var _startDate : dateClass
+    lateinit var _endDate : dateClass
     var _location : String = ""
     var _canMulti : Boolean = true
     var _notice : String = ""

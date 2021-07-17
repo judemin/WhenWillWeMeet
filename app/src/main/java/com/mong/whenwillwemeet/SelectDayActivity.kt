@@ -33,8 +33,9 @@ class SelectDayActivity : AppCompatActivity() {
 
         val database = Firebase.database
         val nowRef = database.getReference("" + roomID)
+
         nowRef.child("room").get().addOnSuccessListener {
-        //    nowRoom = it as roomInfo
+            nowRoom = it.getValue(roomInfo::class.java) as roomInfo
         }.addOnFailureListener {
             makeToast("데이터베이스 연결 오류!")
         }
