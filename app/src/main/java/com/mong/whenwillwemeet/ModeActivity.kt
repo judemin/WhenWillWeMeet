@@ -1,5 +1,8 @@
 package com.mong.whenwillwemeet
 
+import android.app.AlertDialog
+import android.app.Dialog
+import android.content.DialogInterface
 import android.content.Intent
 import android.os.Bundle
 import android.os.PersistableBundle
@@ -8,21 +11,24 @@ import android.widget.Button
 import android.widget.EditText
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.fragment.app.DialogFragment
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
+import kotlin.math.log
 
 class ModeActivity : AppCompatActivity() {
+
+    var nowUser : userInfo = userInfo()
+    var roomID : String = ""
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.actibity_mode)
 
-        var nowUser : userInfo = userInfo()
         if(intent.hasExtra("pid"))
             nowUser.pid = intent.getStringExtra("pid")
         if(intent.hasExtra("name"))
             nowUser.name = intent.getStringExtra("name")
-
 
 
         val actionBar = supportActionBar
@@ -40,24 +46,51 @@ class ModeActivity : AppCompatActivity() {
 
         findBtn.setOnClickListener {
             val inputCode : EditText = findViewById(R.id.mode_inputcode_et)
-            val roomID = inputCode.text
+            roomID = inputCode.text.toString()
 
             val database = Firebase.database
             val nowRef = database.getReference("" + roomID)
 
-            nowRef.get().addOnSuccessListener {
+            nowRef.child("room").get().addOnSuccessListener {
 
-                // popup dialog 추가해야 함
+                if(it.getValue() == null)
+                    makeToast("약속이 없는거 같은데..?ㅠㅜ")
+                else{
+                    var passwd : String = it.child("_password").getValue() as String
 
-                val intent = Intent(this, SelectDayActivity::class.java)
-                intent.putExtra("user", nowUser)
-                intent.putExtra("roomID", roomID)
-                startActivity(intent)
+                    if(passwd.equals("")){
+                        startSelectDay(nowUser, roomID)
+                    }else {
+                        val builder = AlertDialog.Builder(this)
+                        val dialogView = layoutInflater.inflate(R.layout.dialog_password, null)
+
+                        builder.setView(dialogView)
+                            .setPositiveButton("확인") { dialogInterface, i ->
+
+                                var passwdET : EditText = dialogView.findViewById<EditText>(R.id.dialog_passwd_et)
+                                if (passwd.equals(passwdET.text.toString())) // EditText에서 toString이 문제
+                                    startSelectDay(nowUser, roomID)
+                                else
+                                    makeToast("비밀번호 다시 확인해봐!")
+                            }
+                            .setNegativeButton("취소") { dialogInterface, i ->
+                                // 취소일때 아무 액션 없음
+                            }
+                            .show()
+                    }
+                }
 
             }.addOnFailureListener {
-                makeToast("약속이 없는거 같은데..?ㅠㅜ")
+                makeToast("네트워크 오류!")
             }
         }
+    }
+
+    private fun startSelectDay(nowUser : userInfo, roomID : String){
+        val intent = Intent(this, SelectDayActivity::class.java)
+        intent.putExtra("user", nowUser)
+        intent.putExtra("roomID", roomID)
+        startActivity(intent)
     }
 
     override fun onDestroy() {

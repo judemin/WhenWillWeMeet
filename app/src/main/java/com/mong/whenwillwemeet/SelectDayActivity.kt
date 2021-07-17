@@ -38,7 +38,7 @@ class SelectDayActivity : AppCompatActivity() {
             var tmp : roomInfo = (it.getValue(roomInfo::class.java) as roomInfo)
             afterRoomSetting(tmp.deepCopy())
         }.addOnFailureListener {
-            makeToast("데이터베이스 연결 오류!")
+            makeToast("네트워크 오류!")
         }
     }
 
