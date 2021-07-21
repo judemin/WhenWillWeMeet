@@ -7,6 +7,7 @@ import android.widget.EditText
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
@@ -14,7 +15,7 @@ import java.util.*
 
 class SelectDayActivity : AppCompatActivity() {
 
-    var roomID = "FKNHZWSKXX" // roomID for test -> Manifrest 수정 필요
+    var roomID = "FKNHZWSKXX" // roomID for test -> Manifrest 수정 필요, startActivity
     var nowUser : userInfo = userInfo()
     var nowRoom : roomInfo = roomInfo()
 
@@ -45,7 +46,7 @@ class SelectDayActivity : AppCompatActivity() {
         }
     }
 
-    fun afterRoomSetting(roomInfoT: roomInfo){
+    private fun afterRoomSetting(roomInfoT: roomInfo){
         nowRoom = roomInfoT
 
         /// Textview 세팅 ///
@@ -53,41 +54,43 @@ class SelectDayActivity : AppCompatActivity() {
         val roomidTV: TextView = findViewById(R.id.selectday_roomid_tv) // roomid clickable하게 => 터치하면 코드 복사
         val noticeTV: TextView = findViewById(R.id.selectday_notice_tv)
         val locationTV: TextView = findViewById(R.id.selectday_location_tv)
+        val readyTV: TextView = findViewById(R.id.selectday_ready_tv)
 
-        roomidTV.setText("약속 코드 : " + nowRoom._roomID)
-        noticeTV.setText("공지사항 : " + nowRoom._notice)
-        locationTV.setText("약속 장소 : " + nowRoom._location)
+        roomidTV.text = "약속 코드 : " + nowRoom._roomID
+        noticeTV.text = "공지사항 : " + nowRoom._notice
+        locationTV.text = "약속 장소 : " + nowRoom._location
+        readyTV.text = "0명 준비 / 1명" // database changed 되었을 때 준비된 사람 변경, 현재 방에 있는 사람까지 가져오기
 
-        /// 캘린더 세팅 ///
-        // SelectDay에서 dateClass st ed 데이터 바탕으로 캘린더 7개 만들어서 보내줌
-        // 7개씩 LinearLayout + monthLayout => weekAdapter들을 Adapter에
-        val calAdapter : calendarAdapter
-        val recView : RecyclerView = findViewById(R.id.selectday_calendar_rv)
+        /// 캘린더 날짜 세팅 ///
 
         val nowDay : Calendar = Calendar.getInstance()
         val edDay : Calendar = Calendar.getInstance()
         nowDay.set(nowRoom._startDate.year,nowRoom._startDate.month,nowRoom._startDate.day)
         edDay.set(nowRoom._endDate.year,nowRoom._endDate.month,nowRoom._endDate.day)
 
-        var weekArr : Array<Calendar> = Array(1){ Calendar.getInstance()} // 람다식으로 배열 초기화
+        var weekVec = Vector<Calendar>() // 람다식으로 배열 초기화
 
-        var weekCnt = 0
         while(!isSameDate(nowDay,edDay)){ // Array에 넣을 때 clone
-            weekArr.
-            weekArr[weekCnt] = nowDay.clone()
+            weekVec.addElement(nowDay.clone() as Calendar?)
             nowDay.add(Calendar.DATE,1)
-
-            if(dayCnt == 7){
-                weekCnt++
-                dayCnt = 0
-            }
         }
 
+        /// 리사이클러 뷰 세팅 ///
+
+        val calAdapter : calendarAdapter
+        val recView : RecyclerView = findViewById(R.id.selectday_calendar_rv)
+
+        recView.setHasFixedSize(true)
+
+        val mLayoutManager = LinearLayoutManager(this);
+        recView.layoutManager = mLayoutManager;
+
+        calAdapter = calendarAdapter(weekVec)
         recView.adapter = calAdapter
 
     }
 
-    fun isSameDate(src : Calendar,dst : Calendar) : Boolean{
+    private fun isSameDate(src : Calendar, dst : Calendar) : Boolean{
         if(src.get(Calendar.YEAR) != dst.get(Calendar.YEAR))
             return false
         if(src.get(Calendar.MONTH) != dst.get(Calendar.MONTH))
