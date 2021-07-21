@@ -55,7 +55,7 @@ class SelectDayActivity : AppCompatActivity() {
         noticeTV.setText("공지사항 : " + nowRoom._notice)
         locationTV.setText("약속 장소 : " + nowRoom._location)
 
-        ///  ///
+        /// 캘린더 세팅 ///
     }
 
     private fun makeToast(msg : String){

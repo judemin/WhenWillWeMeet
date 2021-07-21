@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="50dp"
+    android:layout_weight="7"
+    android:orientation="horizontal">
+    
+    <Button
+        android:id="@+id/row_cal_btn1"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:text="21"
+        android:textColor="@color/pastelRed"
+        />
+
+    <Button
+        android:id="@+id/row_cal_btn2"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:text="22"
+        />
+
+    <Button
+        android:id="@+id/row_cal_btn3"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:text="23"
+        />
+
+    <Button
+        android:id="@+id/row_cal_btn4"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:text="24"
+        />
+
+    <Button
+        android:id="@+id/row_cal_btn5"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:text="25"
+        />
+
+    <Button
+        android:id="@+id/row_cal_btn6"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:text="26"
+        />
+
+    <Button
+        android:id="@+id/row_cal_btn7"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:text="27"
+        />
+
+</LinearLayout>

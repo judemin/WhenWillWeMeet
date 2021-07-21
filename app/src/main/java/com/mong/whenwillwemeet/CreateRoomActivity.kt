@@ -63,7 +63,7 @@ class CreateRoomActivity : AppCompatActivity() {
             if(tmpStCal.timeInMillis >= tmpEdCal.timeInMillis){
                 makeToast("날짜를 올바르게 선택해줘!")
             } else if(tmpEdCal.timeInMillis > dateAfter.timeInMillis){
-                makeToast("기간은 최대 30일까지 설정 가능해..ㅠㅜ")
+                makeToast("기간은 최대 30일까지 설정 가능해")
             } else if(tmpStCal.timeInMillis < nowTime.timeInMillis) {
                 makeToast("날짜를 올바르게 선택해줘!")
             }else {
