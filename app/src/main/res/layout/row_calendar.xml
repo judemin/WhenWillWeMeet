@@ -1,66 +1,51 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
+<LinearLayout android:id="@+id/row_cal_ll"
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="50dp"
-    android:layout_weight="7"
-    android:orientation="horizontal">
-    
-    <Button
-        android:id="@+id/row_cal_btn1"
-        android:layout_width="0dp"
-        android:layout_height="match_parent"
-        android:layout_weight="1"
-        android:text="21"
-        android:textColor="@color/pastelRed"
+    android:orientation="vertical"
+    android:background="@drawable/outline"
+    android:layout_margin="5dp"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <TextView
+        android:id="@+id/row_cal_yearTV"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="2021년 7월"
+        android:textSize="12dp"
+        android:layout_marginTop="2dp"
         />
 
-    <Button
-        android:id="@+id/row_cal_btn2"
-        android:layout_width="0dp"
-        android:layout_height="match_parent"
-        android:layout_weight="1"
-        android:text="22"
-        />
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        >
 
-    <Button
-        android:id="@+id/row_cal_btn3"
-        android:layout_width="0dp"
-        android:layout_height="match_parent"
-        android:layout_weight="1"
-        android:text="23"
-        />
+        <TextView
+            android:id="@+id/row_cal_dayTV"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="right"
+            android:text="21일 (수)"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toLeftOf="@id/row_cal_checkBox"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            android:textSize="20dp"
+            android:textColor="#000000"
+            />
 
-    <Button
-        android:id="@+id/row_cal_btn4"
-        android:layout_width="0dp"
-        android:layout_height="match_parent"
-        android:layout_weight="1"
-        android:text="24"
-        />
+        <androidx.appcompat.widget.AppCompatCheckBox
+            android:id="@+id/row_cal_checkBox"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            android:buttonTint="@color/baseBlue"
+            />
 
-    <Button
-        android:id="@+id/row_cal_btn5"
-        android:layout_width="0dp"
-        android:layout_height="match_parent"
-        android:layout_weight="1"
-        android:text="25"
-        />
-
-    <Button
-        android:id="@+id/row_cal_btn6"
-        android:layout_width="0dp"
-        android:layout_height="match_parent"
-        android:layout_weight="1"
-        android:text="26"
-        />
-
-    <Button
-        android:id="@+id/row_cal_btn7"
-        android:layout_width="0dp"
-        android:layout_height="match_parent"
-        android:layout_weight="1"
-        android:text="27"
-        />
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
 </LinearLayout>

@@ -4,24 +4,19 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
+import android.widget.LinearLayout
 import android.widget.TextView
+import androidx.core.view.isVisible
 import androidx.recyclerview.widget.RecyclerView
 import java.util.*
 
-class calendarAdapter(private val dataSet: Array<Calendar>) : // dateClass를 Calendar로 변환하여 넘겨줌
+class calendarAdapter(private val dataSet: Array<Array<Int>>) : // 2차원 월 데이터
     RecyclerView.Adapter<calendarAdapter.ViewHolder>() {
 
     class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         lateinit var buttons: Array<Button>
 
         init {
-            buttons[0] = view.findViewById(R.id.row_cal_btn1)
-            buttons[1] = view.findViewById(R.id.row_cal_btn2)
-            buttons[2] = view.findViewById(R.id.row_cal_btn3)
-            buttons[3] = view.findViewById(R.id.row_cal_btn4)
-            buttons[4] = view.findViewById(R.id.row_cal_btn5)
-            buttons[5] = view.findViewById(R.id.row_cal_btn6)
-            buttons[6] = view.findViewById(R.id.row_cal_btn7)
         }
     }
 
@@ -32,12 +27,13 @@ class calendarAdapter(private val dataSet: Array<Calendar>) : // dateClass를 Ca
         return ViewHolder(view)
     }
 
-    // Replace the contents of a view (invoked by the layout manager)
     override fun onBindViewHolder(viewHolder: ViewHolder, position: Int) {
-
-        // Get element from your dataset at this position and replace the
-        // contents of the view with that element
-        //viewHolder.textView.text = dataSet[position]
+        if(dataSet[position] == null){
+            viewHolder.buttons[position].isVisible = false
+            viewHolder.buttons[position].isEnabled = false
+        } else {
+            viewHolder.buttons[position].setText(dataSet[position].get(Calendar.DAY_OF_MONTH))
+        }
     }
 
     override fun getItemCount() = dataSet.size
