@@ -1,27 +1,29 @@
 package com.mong.whenwillwemeet
 
+import android.app.Activity
+import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
 import android.widget.CheckBox
 import android.widget.LinearLayout
 import android.widget.TextView
-import androidx.core.view.isVisible
 import androidx.recyclerview.widget.RecyclerView
 import java.util.*
 
-class calendarAdapter(private val dataSet: Vector<Calendar>) : // 2차원 월 데이터
+class calendarAdapter(private val dataSet: Vector<Calendar>, private val selDay : SelectDayActivity) : // 2차원 월 데이터
     RecyclerView.Adapter<calendarAdapter.ViewHolder>() {
 
     val dayofweek = arrayListOf<String>("일","월","화","수","목","금","토")
 
     class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
-        lateinit var yearTV: TextView
-        lateinit var dayTV: TextView
-        lateinit var checkBox: CheckBox
+        var linLayout : LinearLayout
+        var yearTV: TextView
+        var dayTV: TextView
+        var checkBox: CheckBox
 
         init {
+            linLayout = view.findViewById(R.id.row_cal_ll)
             yearTV = view.findViewById(R.id.row_cal_yearTV)
             dayTV = view.findViewById(R.id.row_cal_dayTV)
             checkBox = view.findViewById(R.id.row_cal_checkBox)
@@ -41,6 +43,10 @@ class calendarAdapter(private val dataSet: Vector<Calendar>) : // 2차원 월 �
         viewHolder.yearTV.setText("${nowCal.get(Calendar.YEAR)}년 ${nowCal.get(Calendar.MONTH) + 1}월")
         viewHolder.dayTV.setText("${nowCal.get(Calendar.DATE)}일 " +
                 "(${dayofweek[nowCal.get(Calendar.DAY_OF_WEEK) - 1]})")
+
+        viewHolder.linLayout.setOnClickListener {
+            selDay.onClickDate(nowCal, viewHolder.checkBox)
+        }
     }
 
     override fun getItemCount() = dataSet.size

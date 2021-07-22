@@ -7,7 +7,7 @@ import java.util.*
 class userInfo() : Parcelable {
     var pid : String = ""
     var name : String = ""
-    var selectedDates = mutableListOf<Calendar>()
+    var selectedDates : Map<String, dateClass> = mutableMapOf()
 
     constructor(parcel: Parcel) : this() {
         pid = parcel.readString().toString()

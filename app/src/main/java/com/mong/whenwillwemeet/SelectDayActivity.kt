@@ -1,11 +1,7 @@
 package com.mong.whenwillwemeet
 
 import android.os.Bundle
-import android.os.PersistableBundle
-import android.widget.CalendarView
-import android.widget.EditText
-import android.widget.TextView
-import android.widget.Toast
+import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -16,7 +12,7 @@ import java.util.*
 class SelectDayActivity : AppCompatActivity() {
 
     var roomID = "FKNHZWSKXX" // roomID for test -> Manifrest 수정 필요, startActivity
-    var nowUser : userInfo = userInfo()
+    private var _nowUser : userInfo = userInfo()
     var nowRoom : roomInfo = roomInfo()
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -28,7 +24,7 @@ class SelectDayActivity : AppCompatActivity() {
             actionBar.title = "그래서 우리 언제 만나?"
 
         if(intent.hasExtra("user"))
-            nowUser = intent.getParcelableExtra("user")
+            _nowUser = intent.getParcelableExtra("user")
 
         /// Room Info Firebase ///
 
@@ -85,9 +81,26 @@ class SelectDayActivity : AppCompatActivity() {
         val mLayoutManager = LinearLayoutManager(this);
         recView.layoutManager = mLayoutManager;
 
-        calAdapter = calendarAdapter(weekVec)
+        calAdapter = calendarAdapter(weekVec,this)
         recView.adapter = calAdapter
 
+    }
+
+    fun onClickDate(cal : Calendar, checkB : CheckBox){
+        var nowDate = dateClass(cal.get(Calendar.YEAR), cal.get(Calendar.MONTH), cal.get(Calendar.DATE))
+        val dateStr = "${nowDate.year}${nowDate.month}${nowDate.day}"
+
+        if(!checkB.isChecked) {
+            checkB.isChecked = true
+            checkB.buttonTintList = getColorStateList(R.color.baseBlue)
+
+            _nowUser.selectedDates.plus(Pair(dateStr,nowDate))
+        } else {
+            checkB.isChecked = false
+            checkB.buttonTintList = getColorStateList(R.color.pastelRed)
+
+            _nowUser.selectedDates.minus(dateStr)
+        }
     }
 
     private fun isSameDate(src : Calendar, dst : Calendar) : Boolean{
