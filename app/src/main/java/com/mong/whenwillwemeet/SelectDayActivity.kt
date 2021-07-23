@@ -99,16 +99,10 @@ class SelectDayActivity : AppCompatActivity() {
         val sendImg : ImageView = findViewById(R.id.selectday_send_iv)
 
         sendImg.setOnClickListener {
-            val msgDTO = msgClass()
             val etText = chatET.text.toString()
 
             if(etText != "") {
-                msgDTO.msg = etText
-                msgDTO.sender = _nowUser.name
-                msgDTO.senderCode = _nowUser.pid
-                msgDTO.sendDate = dateClass(Calendar.getInstance())
-
-                nowRef.child("messages").push().setValue(msgDTO)
+                sendMsg(etText, _nowUser.name, _nowUser.pid)
                 chatET.setText("")
             }
         }
@@ -144,5 +138,16 @@ class SelectDayActivity : AppCompatActivity() {
 
     private fun makeToast(msg : String){
         Toast.makeText(applicationContext,"" + msg, Toast.LENGTH_SHORT).show()
+    }
+
+    private fun sendMsg(msg : String, sender : String, code : String){
+        val msgDTO = msgClass()
+
+        msgDTO.msg = msg
+        msgDTO.sender = sender
+        msgDTO.senderCode = code
+        msgDTO.sendDate = dateClass(Calendar.getInstance())
+
+        nowRef.child("messages").push().setValue(msgDTO)
     }
 }
