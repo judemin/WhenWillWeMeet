@@ -39,12 +39,18 @@ class ModeActivity : AppCompatActivity() {
         val findBtn : Button = findViewById(R.id.mode_findBtn)
 
         createBtn.setOnClickListener {
+            createBtn.isEnabled = true
+
             val intent = Intent(this, CreateRoomActivity::class.java)
             intent.putExtra("user", nowUser)
             startActivity(intent)
+
+            createBtn.isEnabled = false
         }
 
         findBtn.setOnClickListener {
+            findBtn.isEnabled = false
+
             val inputCode : EditText = findViewById(R.id.mode_inputcode_et)
             roomID = inputCode.text.toString()
 
@@ -83,6 +89,7 @@ class ModeActivity : AppCompatActivity() {
             }.addOnFailureListener {
                 makeToast("네트워크 오류!")
             }
+            findBtn.isEnabled = true
         }
     }
 

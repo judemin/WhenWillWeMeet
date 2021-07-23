@@ -121,7 +121,7 @@ class SelectDayActivity : AppCompatActivity() {
 
         chatAdapt = chatAdapter(this)
         chatRecView.adapter = chatAdapt
-        // ChildListener //
+        // Chatting ChildListener //
         val childEventListener = object : ChildEventListener {
             override fun onChildAdded(dataSnapshot: DataSnapshot, previousChildName: String?) { // add 되었을 때 trigger
                 Log.d(TAG, "onChildAdded:" + dataSnapshot.key!!)

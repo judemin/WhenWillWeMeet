@@ -39,6 +39,8 @@ class CreateRoomActivity : AppCompatActivity() {
 
         val roomCreateBtn : Button = findViewById(R.id.createRoom_makeRoomBtn)
         roomCreateBtn.setOnClickListener {
+            roomCreateBtn.isEnabled = false
+
             val passwdET: EditText = findViewById(R.id.createRoom_passwdET)
             val startDateP: DatePicker = findViewById(R.id.createRoom_stDateDP)
             val endDateP: DatePicker = findViewById(R.id.createRoom_edDateDP)
@@ -103,6 +105,7 @@ class CreateRoomActivity : AppCompatActivity() {
 
                 finish()
             }
+            roomCreateBtn.isEnabled = true
         }
     }
 
