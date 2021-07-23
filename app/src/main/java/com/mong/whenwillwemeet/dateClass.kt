@@ -7,18 +7,16 @@ class dateClass {
     var day : Int = 0
     var month : Int = 0
     var year : Int = 0
+    var hour : Int = 0;
+    var min : Int = 0;
 
     constructor() {}
-
-    constructor(year : Int, month: Int, day : Int){
-        this.day = day
-        this.month = month
-        this.year = year
-    }
 
     constructor(c : Calendar){
         day = c.get(Calendar.DAY_OF_MONTH)
         month = c.get(Calendar.MONTH)
         year = c.get(Calendar.YEAR)
+        hour = c.get(Calendar.HOUR)
+        min = c.get(Calendar.MINUTE)
     }
 }

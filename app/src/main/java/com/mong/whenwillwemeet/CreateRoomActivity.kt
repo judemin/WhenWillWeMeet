@@ -92,7 +92,7 @@ class CreateRoomActivity : AppCompatActivity() {
                 nowRef.child("readyNum").setValue(0)
 
                 // nowRef.child("users").child("" + nowUser.pid).setValue(nowUser) // DTO
-                nowRef.child("messeges").setValue("messeges") // DTO
+                // nowRef.child("messeges").setValue("messeges") // DTO
 
                 /// Intent 이동 ///
 

@@ -5,6 +5,7 @@ import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
 import java.util.*
@@ -14,10 +15,18 @@ class SelectDayActivity : AppCompatActivity() {
     var roomID = "FKNHZWSKXX" // roomID for test -> Manifrest 수정 필요, startActivity
     private var _nowUser : userInfo = userInfo()
     var nowRoom : roomInfo = roomInfo()
+    lateinit var nowRef : DatabaseReference
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_selectday)
+
+
+        /// nowUser for test
+        _nowUser.name = "민상연"
+        _nowUser.pid = "ABCDEFGHIJ"
+        ///
+
 
         val actionBar = supportActionBar
         if (actionBar != null)
@@ -32,7 +41,7 @@ class SelectDayActivity : AppCompatActivity() {
             roomID = intent.getStringExtra("roomID")
 
         val database = Firebase.database
-        val nowRef = database.getReference("" + roomID)
+        nowRef = database.getReference("" + roomID)
 
         nowRef.child("room").get().addOnSuccessListener {
             var tmp : roomInfo = (it.getValue(roomInfo::class.java) as roomInfo)
@@ -71,7 +80,7 @@ class SelectDayActivity : AppCompatActivity() {
             nowDay.add(Calendar.DATE,1)
         }
 
-        /// 리사이클러 뷰 세팅 ///
+        /// 캘린더 리사이클러 뷰 세팅 ///
 
         val calAdapter : calendarAdapter
         val recView : RecyclerView = findViewById(R.id.selectday_calendar_rv)
@@ -84,10 +93,30 @@ class SelectDayActivity : AppCompatActivity() {
         calAdapter = calendarAdapter(weekVec,this)
         recView.adapter = calAdapter
 
+        /// 채팅 세팅 ///
+
+        val chatET : EditText = findViewById(R.id.selectday_chat_et)
+        val sendImg : ImageView = findViewById(R.id.selectday_send_iv)
+
+        sendImg.setOnClickListener {
+            val msgDTO = msgClass()
+            val etText = chatET.text.toString()
+
+            if(etText != "") {
+                msgDTO.msg = etText
+                msgDTO.sender = _nowUser.name
+                msgDTO.senderCode = _nowUser.pid
+                msgDTO.sendDate = dateClass(Calendar.getInstance())
+
+                nowRef.child("messages").push().setValue(msgDTO)
+                chatET.setText("")
+            }
+        }
+
     }
 
     fun onClickDate(cal : Calendar, checkB : CheckBox){
-        var nowDate = dateClass(cal.get(Calendar.YEAR), cal.get(Calendar.MONTH), cal.get(Calendar.DATE))
+        var nowDate = dateClass(cal)
         val dateStr = "${nowDate.year}${nowDate.month}${nowDate.day}"
 
         if(!checkB.isChecked) {
