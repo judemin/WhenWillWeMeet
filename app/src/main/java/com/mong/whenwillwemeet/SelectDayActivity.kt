@@ -1,19 +1,23 @@
 package com.mong.whenwillwemeet
 
 import android.os.Bundle
+import android.util.Log
 import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.google.firebase.database.DatabaseReference
+import com.google.firebase.database.*
 import com.google.firebase.database.ktx.database
+import com.google.firebase.database.ktx.getValue
 import com.google.firebase.ktx.Firebase
 import java.util.*
 
 class SelectDayActivity : AppCompatActivity() {
 
+    private val TAG = "SelectDay"
+
     var roomID = "FKNHZWSKXX" // roomID for test -> Manifrest 수정 필요, startActivity
-    private var _nowUser : userInfo = userInfo()
+    var nowUser : userInfo = userInfo()
     var nowRoom : roomInfo = roomInfo()
     lateinit var nowRef : DatabaseReference
 
@@ -23,8 +27,8 @@ class SelectDayActivity : AppCompatActivity() {
 
 
         /// nowUser for test
-        _nowUser.name = "민상연"
-        _nowUser.pid = "ABCDEFGHIJ"
+        nowUser.name = "민상연"
+        nowUser.pid = "ABCDEFGHIJ"
         ///
 
 
@@ -33,7 +37,7 @@ class SelectDayActivity : AppCompatActivity() {
             actionBar.title = "그래서 우리 언제 만나?"
 
         if(intent.hasExtra("user"))
-            _nowUser = intent.getParcelableExtra("user")
+            nowUser = intent.getParcelableExtra("user")
 
         /// Room Info Firebase ///
 
@@ -102,10 +106,61 @@ class SelectDayActivity : AppCompatActivity() {
             val etText = chatET.text.toString()
 
             if(etText != "") {
-                sendMsg(etText, _nowUser.name, _nowUser.pid)
+                sendMsg(etText, nowUser.name, nowUser.pid)
                 chatET.setText("")
             }
         }
+        // 채팅 리사이클러 뷰 //
+        val chatAdapt : chatAdapter
+        val chatRecView : RecyclerView = findViewById(R.id.selectday_chat_rv)
+
+        chatRecView.setHasFixedSize(true)
+
+        val chatLayoutManager = LinearLayoutManager(this);
+        chatRecView.layoutManager = chatLayoutManager;
+
+        chatAdapt = chatAdapter(this)
+        chatRecView.adapter = chatAdapt
+        // ChildListener //
+        val childEventListener = object : ChildEventListener {
+            override fun onChildAdded(dataSnapshot: DataSnapshot, previousChildName: String?) { // add 되었을 때 trigger
+                Log.d(TAG, "onChildAdded:" + dataSnapshot.key!!)
+                val comment = dataSnapshot.getValue<msgClass>() as msgClass
+
+                if (comment != null)
+                    chatAdapt.addData(comment)
+
+                chatRecView.scrollToPosition(chatAdapt.itemCount - 1)
+            }
+
+            override fun onChildChanged(dataSnapshot: DataSnapshot, previousChildName: String?) {
+                Log.d(TAG, "onChildChanged: ${dataSnapshot.key}")
+
+                val newComment = dataSnapshot.getValue<msgClass>()
+                val commentKey = dataSnapshot.key
+            }
+
+            override fun onChildRemoved(dataSnapshot: DataSnapshot) {
+                Log.d(TAG, "onChildRemoved:" + dataSnapshot.key!!)
+                val commentKey = dataSnapshot.key
+            }
+
+            override fun onChildMoved(dataSnapshot: DataSnapshot, previousChildName: String?) {
+                Log.d(TAG, "onChildMoved:" + dataSnapshot.key!!)
+
+                val movedComment = dataSnapshot.getValue<msgClass>()
+                val commentKey = dataSnapshot.key
+            }
+
+            override fun onCancelled(databaseError: DatabaseError) {
+                Log.w(TAG, "postComments:onCancelled", databaseError.toException())
+                makeToast("Failed to load comments.")
+            }
+        }
+        nowRef.child("messages").addChildEventListener(childEventListener)
+
+        /// ///
+
 
     }
 
@@ -117,12 +172,12 @@ class SelectDayActivity : AppCompatActivity() {
             checkB.isChecked = true
             checkB.buttonTintList = getColorStateList(R.color.baseBlue)
 
-            _nowUser.selectedDates.plus(Pair(dateStr,nowDate))
+            nowUser.selectedDates.plus(Pair(dateStr,nowDate))
         } else {
             checkB.isChecked = false
             checkB.buttonTintList = getColorStateList(R.color.pastelRed)
 
-            _nowUser.selectedDates.minus(dateStr)
+            nowUser.selectedDates.minus(dateStr)
         }
     }
 

@@ -13,9 +13,11 @@
         android:layout_width="0dp"
         android:layout_height="match_parent"
         android:layout_weight="1"
-        android:background="@drawable/outline"
+        android:background="@drawable/chat_outline"
         android:weightSum="10"
         android:orientation="vertical"
+        android:layout_marginRight="5dp"
+
         >
 
         <TextView
@@ -23,9 +25,10 @@
             android:layout_width="match_parent"
             android:layout_height="12dp"
             android:text="보낸 사람"
-            android:textSize="10dp"
+            android:textSize="8dp"
             android:gravity="left"
-            android:layout_margin="2dp"
+            android:layout_marginTop="6dp"
+            android:layout_marginLeft="6dp"
             />
 
         <TextView
@@ -36,7 +39,8 @@
             android:textSize="15dp"
             android:textColor="#000000"
             android:gravity="left"
-            android:layout_margin="2dp"
+            android:layout_marginBottom="6dp"
+            android:layout_marginLeft="6dp"
             />
 
     </LinearLayout>
@@ -48,6 +52,7 @@
         android:layout_weight="1"
         android:background="@drawable/chat_outline_mine"
         android:orientation="vertical"
+        android:layout_marginLeft="5dp"
         >
 
 
@@ -59,7 +64,9 @@
             android:textSize="15dp"
             android:textColor="#000000"
             android:gravity="right"
-            android:layout_margin="2dp"
+            android:layout_marginRight="6dp"
+            android:layout_marginTop="6dp"
+            android:layout_marginBottom="6dp"
             />
 
     </LinearLayout>
