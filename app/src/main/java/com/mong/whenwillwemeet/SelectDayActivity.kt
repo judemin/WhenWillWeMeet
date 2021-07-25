@@ -22,7 +22,16 @@ class SelectDayActivity : AppCompatActivity() {
     var roomID = "FKNHZWSKXX" // roomID for test -> Manifrest 수정 필요, startActivity
     var nowUser : userInfo = userInfo()
     var nowRoom : roomInfo = roomInfo()
+
+    //
     lateinit var nowRef : DatabaseReference
+    lateinit var database : FirebaseDatabase
+
+    // Firebase에서 가져올 userNum,readyNum
+    var userNum : Long = 100
+    var readyNum : Long = 0
+    private lateinit var readyTV: TextView
+    var isReady : Boolean = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -47,7 +56,7 @@ class SelectDayActivity : AppCompatActivity() {
         if(intent.hasExtra("roomID"))
             roomID = intent.getStringExtra("roomID")
 
-        val database = Firebase.database
+        database = Firebase.database
         nowRef = database.getReference("" + roomID)
 
         nowRef.child("room").get().addOnSuccessListener {
@@ -56,30 +65,15 @@ class SelectDayActivity : AppCompatActivity() {
         }.addOnFailureListener {
             makeToast("네트워크 오류!")
         }
-
-        /// Firebase Transaction이 필요한 Update ///
-        nowRef.child("userNum").runTransaction(object : Transaction.Handler {
-            override fun doTransaction(mutableData: MutableData): Transaction.Result {
-                val tmp = mutableData.value as Int
-
-                Log.e(" ","" + tmp)
-                mutableData.value = tmp + 1
-                return Transaction.success(mutableData)
-            }
-
-            override fun onComplete(
-                databaseError: DatabaseError?,
-                committed: Boolean,
-                currentData: DataSnapshot?
-            ) {
-                // Transaction completed
-                Log.d(TAG, "postTransaction:onComplete:")
-            }
-        })
     }
 
     override fun onDestroy() {
         super.onDestroy()
+        changeRoomNum(-1,"userNum")
+        if(isReady){
+            changeRoomNum(-1,"readyNum")
+            nowRef.child("users").child("" + nowUser.pid).removeValue()
+        }
     }
 
     private fun afterRoomSetting(roomInfoT: roomInfo){
@@ -90,12 +84,12 @@ class SelectDayActivity : AppCompatActivity() {
         val roomidTV: TextView = findViewById(R.id.selectday_roomid_tv) // roomid clickable하게 => 터치하면 코드 복사
         val noticeTV: TextView = findViewById(R.id.selectday_notice_tv)
         val locationTV: TextView = findViewById(R.id.selectday_location_tv)
-        val readyTV: TextView = findViewById(R.id.selectday_ready_tv)
+        readyTV = findViewById(R.id.selectday_ready_tv)
 
         roomidTV.text = "약속 코드 : " + nowRoom._roomID
         noticeTV.text = "공지사항 : " + nowRoom._notice
         locationTV.text = "약속 장소 : " + nowRoom._location
-        readyTV.text = "0명 준비 / 1명" // database changed 되었을 때 준비된 사람 변경, 현재 방에 있는 사람까지 가져오기
+        changeRoomNum(1,"userNum") // database changed 되었을 때 준비된 사람 변경, 현재 방에 있는 사람까지 가져오기
 
         /// 캘린더 날짜 세팅 ///
 
@@ -151,7 +145,6 @@ class SelectDayActivity : AppCompatActivity() {
         // Chatting ChildListener //
         val childEventListener = object : ChildEventListener {
             override fun onChildAdded(dataSnapshot: DataSnapshot, previousChildName: String?) { // add 되었을 때 trigger
-                Log.d(TAG, "onChildAdded:" + dataSnapshot.key!!)
                 val comment = dataSnapshot.getValue<msgClass>() as msgClass
 
                 if (comment != null)
@@ -161,19 +154,16 @@ class SelectDayActivity : AppCompatActivity() {
             }
 
             override fun onChildChanged(dataSnapshot: DataSnapshot, previousChildName: String?) {
-                Log.d(TAG, "onChildChanged: ${dataSnapshot.key}")
 
                 val newComment = dataSnapshot.getValue<msgClass>()
                 val commentKey = dataSnapshot.key
             }
 
             override fun onChildRemoved(dataSnapshot: DataSnapshot) {
-                Log.d(TAG, "onChildRemoved:" + dataSnapshot.key!!)
                 val commentKey = dataSnapshot.key
             }
 
             override fun onChildMoved(dataSnapshot: DataSnapshot, previousChildName: String?) {
-                Log.d(TAG, "onChildMoved:" + dataSnapshot.key!!)
 
                 val movedComment = dataSnapshot.getValue<msgClass>()
                 val commentKey = dataSnapshot.key
@@ -184,26 +174,59 @@ class SelectDayActivity : AppCompatActivity() {
                 makeToast("Failed to load comments.")
             }
         }
-        nowRef.child("messages").addChildEventListener(childEventListener)
+        val charRef = database.getReference("" + roomID).child("messages")
+        charRef.addChildEventListener(childEventListener)
 
         /// 준비/취소 처리 ///
 
         val readyBtn : Button = findViewById(R.id.selectday_ready_btn)
-        var isReady = false
         readyBtn.setOnClickListener {
             if(!isReady){ // 준비완료 처리
                 isReady  = true
 
                 nowRef.child("users").child("" + nowUser.pid).setValue(nowUser)
-                Log.e("","" + nowUser.selectedDates.keys)
                 readyBtn.text = "아냐 바꿀래"
+
+                changeRoomNum(1,"readyNum")
             } else{ // 취소 처리
                 isReady = false
 
                 nowRef.child("users").child("" + nowUser.pid).removeValue()
                 readyBtn.text = "다 골랐어"
+
+                changeRoomNum(-1,"readyNum")
             }
         }
+    }
+
+    private fun changeRoomNum(num : Long, loc : String){ // 증감시킬 값과 content 이름을 파라미터로 넘김
+        nowRef.runTransaction(object : Transaction.Handler { // transaction으로 content 데이터 변환
+            override fun doTransaction(mutableData: MutableData): Transaction.Result {
+                var tmp : Long? = mutableData.child(loc).value as Long?
+
+                if (tmp != null) {
+                    tmp += num
+                    mutableData.child(loc).value = tmp
+
+                    if (loc == "userNum")
+                        userNum = tmp
+                    else if (loc == "readyNum")
+                        readyNum = tmp
+                }
+
+                return Transaction.success(mutableData)
+            }
+
+            override fun onComplete(
+                databaseError: DatabaseError?,
+                committed: Boolean,
+                currentData: DataSnapshot?
+            ) {
+                // Transaction completed
+                readyTV.text = "${readyNum}명 준비 / ${userNum}명"
+                Log.d(TAG, "postTransaction:onComplete:")
+            }
+        })
     }
 
     fun onClickDate(cal : Calendar, checkB : CheckBox){
