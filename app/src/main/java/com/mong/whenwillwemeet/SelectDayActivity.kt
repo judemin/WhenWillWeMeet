@@ -6,20 +6,19 @@ import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import androidx.work.*
 import com.google.firebase.database.*
 import com.google.firebase.database.ktx.database
 import com.google.firebase.database.ktx.getValue
-import com.google.firebase.firestore.DocumentReference
-import com.google.firebase.firestore.FieldValue
-import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.ktx.Firebase
 import java.util.*
+
 
 class SelectDayActivity : AppCompatActivity() {
 
     private val TAG = "SelectDay"
 
-    var roomID = "FKNHZWSKXX" //!// roomID for test -> Manifrest 수정 필요, startActivity
+    var roomID = "PYMYJFLJPA" //!// roomID for test -> Manifrest 수정 필요, startActivity
     var nowUser : userInfo = userInfo()
     var nowRoom : roomInfo = roomInfo()
 
@@ -69,12 +68,23 @@ class SelectDayActivity : AppCompatActivity() {
 
     override fun onDestroy() {
         super.onDestroy()
-        changeRoomNum(-1,"userNum")
 
-        if(isReady){  //!// isReady 되어있을 때 지워지지 않는 문제 수정해야 함 => background?
-            changeRoomNum(-1,"readyNum")
-            nowRef.child("users").child("" + nowUser.pid).removeValue()
-        }
+        val builder: Constraints.Builder = Constraints.Builder()
+            .setRequiredNetworkType(NetworkType.CONNECTED)
+
+        val data: Data.Builder = Data.Builder()
+        data.putString("roomID", roomID)
+        data.putBoolean("isReady", isReady)
+        data.putString("pid",nowUser.pid)
+
+        val uploadWorkRequest: WorkRequest = OneTimeWorkRequestBuilder<deleteWorker>()
+            .setInputData(data.build())
+            .setConstraints(builder.build())
+            .build()
+
+        WorkManager
+            .getInstance(applicationContext)
+            .enqueue(uploadWorkRequest)
     }
 
     private fun afterRoomSetting(roomInfoT: roomInfo){
@@ -90,20 +100,20 @@ class SelectDayActivity : AppCompatActivity() {
         roomidTV.text = "약속 코드 : " + nowRoom._roomID
         noticeTV.text = "공지사항 : " + nowRoom._notice
         locationTV.text = "약속 장소 : " + nowRoom._location
-        changeRoomNum(1,"userNum") // database changed 되었을 때 준비된 사람 변경, 현재 방에 있는 사람까지 가져오기
+        changeRoomNum(1, 0) // database changed 되었을 때 준비된 사람 변경, 현재 방에 있는 사람까지 가져오기
 
         /// 캘린더 날짜 세팅 ///
 
         val nowDay : Calendar = Calendar.getInstance()
         val edDay : Calendar = Calendar.getInstance()
-        nowDay.set(nowRoom._startDate.year,nowRoom._startDate.month,nowRoom._startDate.day)
-        edDay.set(nowRoom._endDate.year,nowRoom._endDate.month,nowRoom._endDate.day)
+        nowDay.set(nowRoom._startDate.year, nowRoom._startDate.month, nowRoom._startDate.day)
+        edDay.set(nowRoom._endDate.year, nowRoom._endDate.month, nowRoom._endDate.day)
 
         var weekVec = Vector<Calendar>() // 람다식으로 배열 초기화
 
-        while(!isSameDate(nowDay,edDay)){ // Array에 넣을 때 clone
+        while(!isSameDate(nowDay, edDay)){ // Array에 넣을 때 clone
             weekVec.addElement(nowDay.clone() as Calendar?)
-            nowDay.add(Calendar.DATE,1)
+            nowDay.add(Calendar.DATE, 1)
         }
 
         /// 캘린더 리사이클러 뷰 세팅 ///
@@ -116,7 +126,7 @@ class SelectDayActivity : AppCompatActivity() {
         val mLayoutManager = LinearLayoutManager(this);
         recView.layoutManager = mLayoutManager;
 
-        calAdapter = calendarAdapter(weekVec,this)
+        calAdapter = calendarAdapter(weekVec, this)
         recView.adapter = calAdapter
 
         /// 채팅 세팅 ///
@@ -188,31 +198,34 @@ class SelectDayActivity : AppCompatActivity() {
                 nowRef.child("users").child("" + nowUser.pid).setValue(nowUser)
                 readyBtn.text = "아냐 바꿀래"
 
-                changeRoomNum(1,"readyNum")
+                changeRoomNum(0, 1)
             } else{ // 취소 처리
                 isReady = false
 
                 nowRef.child("users").child("" + nowUser.pid).removeValue()
                 readyBtn.text = "다 골랐어"
 
-                changeRoomNum(-1,"readyNum")
+                changeRoomNum(0, -1)
             }
         }
     }
 
-    private fun changeRoomNum(num : Long, loc : String){ // 증감시킬 값과 content 이름을 파라미터로 넘김
+    private fun changeRoomNum(uNum: Long, rNum: Long){ // 증감시킬 user, ready 두개 넘김
         nowRef.runTransaction(object : Transaction.Handler { // transaction으로 content 데이터 변환
             override fun doTransaction(mutableData: MutableData): Transaction.Result {
-                var tmp : Long? = mutableData.child(loc).value as Long?
+                var tmpN: Long? = mutableData.child("userNum").value as Long?
+                var tmpR: Long? = mutableData.child("readyNum").value as Long?
 
-                if (tmp != null) {
-                    tmp += num
-                    mutableData.child(loc).value = tmp
+                if (tmpN != null && tmpR != null) {
+                    tmpN += uNum
+                    tmpR += rNum
 
-                    if (loc == "userNum")
-                        userNum = tmp
-                    else if (loc == "readyNum")
-                        readyNum = tmp
+                    mutableData.child("userNum").value = tmpN
+                    mutableData.child("readyNum").value = tmpR
+
+
+                    userNum = tmpN
+                    readyNum = tmpR
                 }
 
                 return Transaction.success(mutableData)
@@ -224,13 +237,13 @@ class SelectDayActivity : AppCompatActivity() {
                 currentData: DataSnapshot?
             ) {
                 // Transaction completed
-                readyTV.text = "${readyNum}명 준비 / ${userNum}명"
+                readyTV.text = "${readyNum}명 준비 / ${userNum}명 "
                 Log.d(TAG, "postTransaction:onComplete:")
             }
         })
     }
 
-    fun onClickDate(cal : Calendar, checkB : CheckBox){
+    fun onClickDate(cal: Calendar, checkB: CheckBox){
         var nowDate = dateClass(cal)
         val dateStr = "${nowDate.year}${nowDate.month}${nowDate.day}"
 
@@ -247,7 +260,7 @@ class SelectDayActivity : AppCompatActivity() {
         }
     }
 
-    private fun isSameDate(src : Calendar, dst : Calendar) : Boolean{
+    private fun isSameDate(src: Calendar, dst: Calendar) : Boolean{
         if(src.get(Calendar.YEAR) != dst.get(Calendar.YEAR))
             return false
         if(src.get(Calendar.MONTH) != dst.get(Calendar.MONTH))
@@ -257,11 +270,11 @@ class SelectDayActivity : AppCompatActivity() {
         return true
     }
 
-    private fun makeToast(msg : String){
-        Toast.makeText(applicationContext,"" + msg, Toast.LENGTH_SHORT).show()
+    private fun makeToast(msg: String){
+        Toast.makeText(applicationContext, "" + msg, Toast.LENGTH_SHORT).show()
     }
 
-    private fun sendMsg(msg : String, sender : String, code : String){
+    private fun sendMsg(msg: String, sender: String, code: String){
         val msgDTO = msgClass()
 
         msgDTO.msg = msg
