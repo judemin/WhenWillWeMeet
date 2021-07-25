@@ -19,7 +19,7 @@ class SelectDayActivity : AppCompatActivity() {
 
     private val TAG = "SelectDay"
 
-    var roomID = "FKNHZWSKXX" // roomID for test -> Manifrest 수정 필요, startActivity
+    var roomID = "FKNHZWSKXX" //!// roomID for test -> Manifrest 수정 필요, startActivity
     var nowUser : userInfo = userInfo()
     var nowRoom : roomInfo = roomInfo()
 
@@ -38,10 +38,10 @@ class SelectDayActivity : AppCompatActivity() {
         setContentView(R.layout.activity_selectday)
 
 
-        /// nowUser for test
+        //!// nowUser for test
         nowUser.name = "민상연"
         nowUser.pid = "ABCDEFGHIJ"
-        ///
+        //!//
 
 
         val actionBar = supportActionBar
@@ -70,7 +70,8 @@ class SelectDayActivity : AppCompatActivity() {
     override fun onDestroy() {
         super.onDestroy()
         changeRoomNum(-1,"userNum")
-        if(isReady){
+
+        if(isReady){  //!// isReady 되어있을 때 지워지지 않는 문제 수정해야 함 => background?
             changeRoomNum(-1,"readyNum")
             nowRef.child("users").child("" + nowUser.pid).removeValue()
         }
@@ -175,7 +176,7 @@ class SelectDayActivity : AppCompatActivity() {
             }
         }
         val charRef = database.getReference("" + roomID).child("messages")
-        charRef.addChildEventListener(childEventListener)
+        charRef.addChildEventListener(childEventListener) //!// messages외에 다른 데이터 Add 되었을 때도 처리되는거 수정해야 함
 
         /// 준비/취소 처리 ///
 

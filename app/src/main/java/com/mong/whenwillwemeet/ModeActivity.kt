@@ -39,13 +39,13 @@ class ModeActivity : AppCompatActivity() {
         val findBtn : Button = findViewById(R.id.mode_findBtn)
 
         createBtn.setOnClickListener {
-            createBtn.isEnabled = true
+            createBtn.isEnabled = false
 
             val intent = Intent(this, CreateRoomActivity::class.java)
             intent.putExtra("user", nowUser)
             startActivity(intent)
 
-            createBtn.isEnabled = false
+            createBtn.isEnabled = true
         }
 
         findBtn.setOnClickListener {
