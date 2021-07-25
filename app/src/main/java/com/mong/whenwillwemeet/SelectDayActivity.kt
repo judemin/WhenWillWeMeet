@@ -53,6 +53,13 @@ class SelectDayActivity : AppCompatActivity() {
         }.addOnFailureListener {
             makeToast("네트워크 오류!")
         }
+
+        /// Firebase FieldValue로 상태 Increment ///
+
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
     }
 
     private fun afterRoomSetting(roomInfoT: roomInfo){
@@ -159,9 +166,24 @@ class SelectDayActivity : AppCompatActivity() {
         }
         nowRef.child("messages").addChildEventListener(childEventListener)
 
-        /// ///
+        /// 준비/취소 처리 ///
 
+        val readyBtn : Button = findViewById(R.id.selectday_ready_btn)
+        var isReady = false
+        readyBtn.setOnClickListener {
+            if(!isReady){ // 준비완료 처리
+                isReady  = true
 
+                nowRef.child("users").child("" + nowUser.pid).setValue(nowUser)
+                Log.e("","" + nowUser.selectedDates.keys)
+                readyBtn.text = "아냐 바꿀래"
+            } else{ // 취소 처리
+                isReady = false
+
+                nowRef.child("users").child("" + nowUser.pid).removeValue()
+                readyBtn.text = "다 골랐어"
+            }
+        }
     }
 
     fun onClickDate(cal : Calendar, checkB : CheckBox){
@@ -172,12 +194,12 @@ class SelectDayActivity : AppCompatActivity() {
             checkB.isChecked = true
             checkB.buttonTintList = getColorStateList(R.color.baseBlue)
 
-            nowUser.selectedDates.plus(Pair(dateStr,nowDate))
+            nowUser.selectedDates[dateStr] = nowDate.deepCopy()
         } else {
             checkB.isChecked = false
             checkB.buttonTintList = getColorStateList(R.color.pastelRed)
 
-            nowUser.selectedDates.minus(dateStr)
+            nowUser.selectedDates.remove(dateStr)
         }
     }
 

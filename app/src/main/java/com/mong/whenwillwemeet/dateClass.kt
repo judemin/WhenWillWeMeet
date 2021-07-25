@@ -1,5 +1,6 @@
 package com.mong.whenwillwemeet
 
+import com.google.gson.Gson
 import java.time.Month
 import java.util.*
 
@@ -28,5 +29,10 @@ class dateClass {
         if(src.day != dest.day)
             return false
         return true
+    }
+
+    fun deepCopy():dateClass {
+        val JSON = Gson().toJson(this)
+        return Gson().fromJson(JSON, dateClass::class.java)
     }
 }
