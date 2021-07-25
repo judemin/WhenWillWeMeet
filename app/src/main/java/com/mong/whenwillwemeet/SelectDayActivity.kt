@@ -9,6 +9,9 @@ import androidx.recyclerview.widget.RecyclerView
 import com.google.firebase.database.*
 import com.google.firebase.database.ktx.database
 import com.google.firebase.database.ktx.getValue
+import com.google.firebase.firestore.DocumentReference
+import com.google.firebase.firestore.FieldValue
+import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.ktx.Firebase
 import java.util.*
 
@@ -54,8 +57,25 @@ class SelectDayActivity : AppCompatActivity() {
             makeToast("네트워크 오류!")
         }
 
-        /// Firebase FieldValue로 상태 Increment ///
+        /// Firebase Transaction이 필요한 Update ///
+        nowRef.child("userNum").runTransaction(object : Transaction.Handler {
+            override fun doTransaction(mutableData: MutableData): Transaction.Result {
+                val tmp = mutableData.value as Int
 
+                Log.e(" ","" + tmp)
+                mutableData.value = tmp + 1
+                return Transaction.success(mutableData)
+            }
+
+            override fun onComplete(
+                databaseError: DatabaseError?,
+                committed: Boolean,
+                currentData: DataSnapshot?
+            ) {
+                // Transaction completed
+                Log.d(TAG, "postTransaction:onComplete:")
+            }
+        })
     }
 
     override fun onDestroy() {

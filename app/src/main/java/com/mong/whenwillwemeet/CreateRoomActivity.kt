@@ -90,7 +90,7 @@ class CreateRoomActivity : AppCompatActivity() {
                 val nowRef = database.getReference("" + nowUser.pid)
 
                 nowRef.child("room").setValue(nowRoomInfo) // DTO
-                nowRef.child("userNum").setValue(1)
+                nowRef.child("userNum").setValue(0)
                 nowRef.child("readyNum").setValue(0)
 
                 // nowRef.child("users").child("" + nowUser.pid).setValue(nowUser) // DTO
