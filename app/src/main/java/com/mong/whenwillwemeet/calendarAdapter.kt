@@ -14,8 +14,6 @@ import java.util.*
 class calendarAdapter(private val dataSet: Vector<Calendar>, private val selDay : SelectDayActivity) : // 2차원 월 데이터
     RecyclerView.Adapter<calendarAdapter.ViewHolder>() {
 
-    val dayofweek = arrayListOf<String>("일","월","화","수","목","금","토")
-
     class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         var linLayout : LinearLayout
         var yearTV: TextView
@@ -42,7 +40,7 @@ class calendarAdapter(private val dataSet: Vector<Calendar>, private val selDay 
 
         viewHolder.yearTV.setText("${nowCal.get(Calendar.YEAR)}년 ${nowCal.get(Calendar.MONTH) + 1}월")
         viewHolder.dayTV.setText("${nowCal.get(Calendar.DATE)}일 " +
-                "(${dayofweek[nowCal.get(Calendar.DAY_OF_WEEK) - 1]})")
+                "(${dateClass.dayofweek[nowCal.get(Calendar.DAY_OF_WEEK) - 1]})")
 
         viewHolder.linLayout.setOnClickListener {
             selDay.onClickDate(nowCal, viewHolder.checkBox)

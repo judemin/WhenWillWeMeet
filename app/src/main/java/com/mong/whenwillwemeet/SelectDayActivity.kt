@@ -1,5 +1,6 @@
 package com.mong.whenwillwemeet
 
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.widget.*
@@ -223,7 +224,6 @@ class SelectDayActivity : AppCompatActivity() {
                     mutableData.child("userNum").value = tmpN
                     mutableData.child("readyNum").value = tmpR
 
-
                     userNum = tmpN
                     readyNum = tmpR
                 }
@@ -236,11 +236,22 @@ class SelectDayActivity : AppCompatActivity() {
                 committed: Boolean,
                 currentData: DataSnapshot?
             ) {
+                Log.d(TAG, "postTransaction:onComplete:")
+
                 // Transaction completed
                 readyTV.text = "${readyNum}명 준비 / ${userNum}명 "
-                Log.d(TAG, "postTransaction:onComplete:")
+
+                if(readyNum == userNum)
+                    startResult()
             }
         })
+    }
+
+    fun startResult(){
+        val intent = Intent(this, ResultActivity::class.java)
+        intent.putExtra("roomID",nowRoom._roomID)
+        startActivity(intent)
+        finish()
     }
 
     fun onClickDate(cal: Calendar, checkB: CheckBox){

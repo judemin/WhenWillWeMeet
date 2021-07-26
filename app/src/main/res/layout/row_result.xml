@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout android:id="@+id/row_result_ll"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="80dp"
+    android:orientation="vertical"
+    android:background="@drawable/outline"
+    android:backgroundTint="@color/baseBlue"
+    android:layout_marginTop="2.5dp"
+    android:layout_marginBottom="2.5dp"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <TextView
+        android:id="@+id/row_result_yearTV"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="2021년 7월"
+        android:textSize="13dp"
+        android:layout_marginTop="2dp"
+        android:layout_marginLeft="5dp"
+        />
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        >
+
+        <TextView
+            android:id="@+id/row_result_dayTV"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="21일 (수)"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            android:textSize="20dp"
+            android:textColor="#000000"
+            />
+
+        <TextView
+            android:id="@+id/row_result_infoTV"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="0명 / 100명"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            android:layout_marginRight="5dp"
+            android:textSize="13dp"
+            />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</LinearLayout>

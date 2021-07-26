@@ -14,6 +14,8 @@ class deleteWorker(appContext: Context, workerParams: WorkerParameters):
     lateinit var database : FirebaseDatabase
     lateinit var pid : String
 
+    var nowUser : Long = 0
+
     override fun doWork(): Result {
         val roomID = inputData.getString("roomID")
         val isReady = inputData.getBoolean("isReady",false)
@@ -43,6 +45,8 @@ class deleteWorker(appContext: Context, workerParams: WorkerParameters):
 
                     mutableData.child("userNum").value = tmpN
                     mutableData.child("readyNum").value = tmpR
+
+                    nowUser = tmpN
                 }
 
                 return Transaction.success(mutableData)
@@ -54,6 +58,11 @@ class deleteWorker(appContext: Context, workerParams: WorkerParameters):
                 currentData: DataSnapshot?
             ) {
                 nowRef.child("users").child("" + pid).removeValue()
+                // tmpN 검사해서 현재 방에 있는 사람이 0명이면 방 삭제
+                    /*
+                if(nowUser.equals(0))
+                    nowRef.removeValue()
+                     */
             }
         })
     }
