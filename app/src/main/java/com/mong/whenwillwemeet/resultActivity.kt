@@ -33,8 +33,35 @@ class ResultActivity : AppCompatActivity() {
         if(intent.hasExtra("roomID"))
             roomID = intent.getStringExtra("roomID")
 
+        /// Database get data ///
+
         database = Firebase.database
         nowRef = database.getReference("" + roomID)
+
+        nowRef.child("room").get().addOnSuccessListener {
+            nowRoom = (it.getValue(roomInfo::class.java) as roomInfo)
+            getUsers()
+        }.addOnFailureListener {
+            makeToast("네트워크 오류!")
+        }
+    }
+
+    private fun getUsers(){
+        nowRef.child("users").get().addOnSuccessListener {
+
+            it.children.forEach {
+                var user: userInfo = it.getValue(userInfo::class.java) as userInfo
+                users.add(user)
+            }
+
+            addUserAdapter()
+        }.addOnFailureListener {
+            makeToast("네트워크 오류!")
+        }
+    }
+
+    private fun addUserAdapter(){
+        userNum = users.size
 
         /// 결과 리사이클러 뷰 ///
 
@@ -45,25 +72,10 @@ class ResultActivity : AppCompatActivity() {
         val resultLayoutManager = LinearLayoutManager(this);
         resultRecView.layoutManager = resultLayoutManager;
 
-        val resultAdapt : resultAdapter = resultAdapter(this)
+        val resultAdapt = resultAdapter(this)
         resultRecView.adapter = resultAdapt
-        // Result ChildListener //
-        nowRef.get().addOnSuccessListener {
-            it.children.forEach {
-                nowRoom = (it.child("room").getValue(roomInfo::class.java) as roomInfo)
 
-                var user: userInfo = it.child("users").getValue(userInfo::class.java) as userInfo
-                users.add(user)
-            }
-
-            addUserAdapter()
-        }.addOnFailureListener {
-            makeToast("네트워크 오류!")
-        }
-    }
-
-    fun addUserAdapter(){
-        userNum = users.size
+        /// Date Count ///
 
         val nowDay : Calendar = Calendar.getInstance()
         val edDay : Calendar = Calendar.getInstance()
@@ -74,12 +86,11 @@ class ResultActivity : AppCompatActivity() {
             val now = dateClass(nowDay)
             val dateKey = now.makeKey()
 
-            for(i in users){
-                if(i.selectedDates.containsKey(dateKey)){
+            for(i in users)
+                if(i.selectedDates.containsKey(dateKey))
+                    now.selectedNum++
 
-                }
-            }
-
+            resultAdapt.addData(now)
             nowDay.add(Calendar.DATE, 1)
         }
     }

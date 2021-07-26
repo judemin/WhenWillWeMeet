@@ -47,9 +47,9 @@ class resultAdapter (private val resultAct: ResultActivity) :
         val userNum = resultAct.userNum
         viewHolder.infoTV.text = "${selectNum}명 / ${userNum}명"
         // FF ~ 00 => 256
-        val colorCode : Int = ((selectNum.toDouble() / userNum.toDouble()) * 256).toInt()
+        val colorCode : Int = ((selectNum.toDouble() / userNum.toDouble()) * 256).toInt() - 1
         val colorString : String = Integer.toHexString(colorCode)
-        viewHolder.resultLL.setBackgroundColor(Color.parseColor("#${colorString}add1fc"))
+        viewHolder.resultLL.setBackgroundColor(Color.parseColor("#" + colorString + "ADD1FC"))
     }
 
     fun addData(tmp : dateClass){
