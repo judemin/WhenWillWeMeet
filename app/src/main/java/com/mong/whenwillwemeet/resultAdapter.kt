@@ -1,6 +1,7 @@
 package com.mong.whenwillwemeet
 
 import android.graphics.Color
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -48,8 +49,11 @@ class resultAdapter (private val resultAct: ResultActivity) :
         viewHolder.infoTV.text = "${selectNum}명 / ${userNum}명"
         // FF ~ 00 => 256
         val colorCode : Int = ((selectNum.toDouble() / userNum.toDouble()) * 256).toInt() - 1
-        val colorString : String = Integer.toHexString(colorCode)
-        viewHolder.resultLL.setBackgroundColor(Color.parseColor("#" + colorString + "ADD1FC"))
+        var colorString : String = "#" + Integer.toHexString(colorCode) + "ADD1FC"
+        if(colorCode < 0)
+            colorString = "#00ADD1FC"
+
+        viewHolder.resultLL.setBackgroundColor(Color.parseColor(colorString))
     }
 
     fun addData(tmp : dateClass){

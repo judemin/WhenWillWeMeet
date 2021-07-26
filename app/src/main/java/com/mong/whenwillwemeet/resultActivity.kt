@@ -30,6 +30,10 @@ class ResultActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_result)
 
+        val actionBar = supportActionBar
+        if (actionBar != null)
+            actionBar.title = "이때 만나자!"
+
         if(intent.hasExtra("roomID"))
             roomID = intent.getStringExtra("roomID")
 

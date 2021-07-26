@@ -19,7 +19,7 @@ class SelectDayActivity : AppCompatActivity() {
 
     private val TAG = "SelectDay"
 
-    var roomID = "PYMYJFLJPA" //!// roomID for test -> Manifrest 수정 필요, startActivity
+    var roomID = ""
     var nowUser : userInfo = userInfo()
     var nowRoom : roomInfo = roomInfo()
 
@@ -36,13 +36,6 @@ class SelectDayActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_selectday)
-
-
-        //!// nowUser for test
-        nowUser.name = "민상연"
-        nowUser.pid = "ABCDEFGHIZ"
-        //!//
-
 
         val actionBar = supportActionBar
         if (actionBar != null)
@@ -103,6 +96,18 @@ class SelectDayActivity : AppCompatActivity() {
         locationTV.text = "약속 장소 : " + nowRoom._location
         changeRoomNum(1, 0) // database changed 되었을 때 준비된 사람 변경, 현재 방에 있는 사람까지 가져오기
 
+        /// 캘린더 리사이클러 뷰 세팅 ///
+
+        val recView : RecyclerView = findViewById(R.id.selectday_calendar_rv)
+
+        recView.setHasFixedSize(true)
+
+        val mLayoutManager = LinearLayoutManager(this)
+        recView.layoutManager = mLayoutManager
+
+        val calAdapter = calendarAdapter(this)
+        recView.adapter = calAdapter
+
         /// 캘린더 날짜 세팅 ///
 
         val nowDay : Calendar = Calendar.getInstance()
@@ -110,25 +115,12 @@ class SelectDayActivity : AppCompatActivity() {
         nowDay.set(nowRoom._startDate.year, nowRoom._startDate.month, nowRoom._startDate.day)
         edDay.set(nowRoom._endDate.year, nowRoom._endDate.month, nowRoom._endDate.day)
 
-        var weekVec = Vector<Calendar>() // 람다식으로 배열 초기화
-
         while(!isSameDate(nowDay, edDay)){ // Array에 넣을 때 clone
-            weekVec.addElement(nowDay.clone() as Calendar?)
+            val nowDate = dateClass(nowDay)
+            calAdapter.addData(nowDate)
+
             nowDay.add(Calendar.DATE, 1)
         }
-
-        /// 캘린더 리사이클러 뷰 세팅 ///
-
-        val calAdapter : calendarAdapter
-        val recView : RecyclerView = findViewById(R.id.selectday_calendar_rv)
-
-        recView.setHasFixedSize(true)
-
-        val mLayoutManager = LinearLayoutManager(this);
-        recView.layoutManager = mLayoutManager;
-
-        calAdapter = calendarAdapter(weekVec, this)
-        recView.adapter = calAdapter
 
         /// 채팅 세팅 ///
 
@@ -253,21 +245,14 @@ class SelectDayActivity : AppCompatActivity() {
         startActivity(intent)
     }
 
-    fun onClickDate(cal: Calendar, checkB: CheckBox){
-        var nowDate = dateClass(cal)
+    fun onClickDate(date : dateClass, state : Boolean){
+        var nowDate = date
         val dateStr = nowDate.makeKey()
 
-        if(!checkB.isChecked) {
-            checkB.isChecked = true
-            checkB.buttonTintList = getColorStateList(R.color.baseBlue)
-
+        if(!state)
             nowUser.selectedDates[dateStr] = nowDate.deepCopy()
-        } else {
-            checkB.isChecked = false
-            checkB.buttonTintList = getColorStateList(R.color.pastelRed)
-
+        else
             nowUser.selectedDates.remove(dateStr)
-        }
     }
 
     private fun isSameDate(src: Calendar, dst: Calendar) : Boolean{
