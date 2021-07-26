@@ -116,7 +116,7 @@ class SelectDayActivity : AppCompatActivity() {
         edDay.set(nowRoom._endDate.year, nowRoom._endDate.month, nowRoom._endDate.day)
 
         while(!isSameDate(nowDay, edDay)){ // Array에 넣을 때 clone
-            val nowDate = dateClass(nowDay)
+            val nowDate = dateClass(nowDay).deepCopy()
             calAdapter.addData(nowDate)
 
             nowDay.add(Calendar.DATE, 1)
@@ -136,7 +136,6 @@ class SelectDayActivity : AppCompatActivity() {
             }
         }
         // 채팅 리사이클러 뷰 //
-        val chatAdapt : chatAdapter
         val chatRecView : RecyclerView = findViewById(R.id.selectday_chat_rv)
 
         chatRecView.setHasFixedSize(true)
@@ -144,7 +143,7 @@ class SelectDayActivity : AppCompatActivity() {
         val chatLayoutManager = LinearLayoutManager(this);
         chatRecView.layoutManager = chatLayoutManager;
 
-        chatAdapt = chatAdapter(this)
+        val chatAdapt = chatAdapter(this)
         chatRecView.adapter = chatAdapt
         // Chatting ChildListener //
         val childEventListener = object : ChildEventListener {

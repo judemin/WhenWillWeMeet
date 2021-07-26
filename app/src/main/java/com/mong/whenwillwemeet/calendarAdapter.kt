@@ -21,11 +21,14 @@ class calendarAdapter(private val selDay : SelectDayActivity) : // 2차원 월 �
 
     val dataSet: Vector<dateClass> = Vector()
 
+    var num : Int = 0
+
     class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         var linLayout : LinearLayout = view.findViewById(R.id.row_cal_ll)
         var yearTV: TextView = view.findViewById(R.id.row_cal_yearTV)
         var dayTV: TextView = view.findViewById(R.id.row_cal_dayTV)
         var checkBox: CheckBox = view.findViewById(R.id.row_cal_checkBox)
+        var isChecked = false
     }
 
     override fun onCreateViewHolder(viewGroup: ViewGroup, viewType: Int): ViewHolder {
@@ -39,19 +42,22 @@ class calendarAdapter(private val selDay : SelectDayActivity) : // 2차원 월 �
         val nowDay : dateClass = dataSet[position]
 
         viewHolder.yearTV.setText("${nowDay.year}년 ${nowDay.month + 1}월")
-        viewHolder.dayTV.setText("${nowDay.day}일 " +
-                "(${dateClass.dayofweek[nowDay.dayOfWeek - 1]})")
+        viewHolder.dayTV.setText("${nowDay.day}일 (${dateClass.dayofweek[nowDay.dayOfWeek - 1]})")
+
+        viewHolder.
 
         viewHolder.linLayout.setOnClickListener {
             val checkB = viewHolder.checkBox
-            val state = checkB.isChecked
 
-            selDay.onClickDate(nowDay, state)
-            if(!state) {
-                viewHolder.checkBox.performClick()
+            Log.e("",""  + position + " "+ viewHolder.isChecked)
+
+            checkB.performClick()
+            selDay.onClickDate(nowDay, viewHolder.isChecked)
+            if(!viewHolder.isChecked) {
+                viewHolder.isChecked = true
                 checkB.buttonTintList = getColorStateList(selDay.applicationContext, R.color.baseBlue)
-            } else if(state) {
-                viewHolder.checkBox.performClick()
+            } else {
+                viewHolder.isChecked = false
                 checkB.buttonTintList = getColorStateList(selDay.applicationContext, R.color.pastelRed)
             }
         }
