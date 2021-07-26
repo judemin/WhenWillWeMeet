@@ -41,6 +41,10 @@ class dateClass {
         return Gson().fromJson(JSON, dateClass::class.java)
     }
 
+    fun makeKey():String{
+        return "${this.year}${this.month}${this.day}"
+    }
+
     companion object {
         val dayofweek = arrayListOf<String>("일","월","화","수","목","금","토")
     }

@@ -18,6 +18,9 @@ class ResultActivity : AppCompatActivity() {
 
     var roomID = ""
     var userNum = 0
+
+    lateinit var nowRoom : roomInfo
+
     var users = Vector<userInfo>()
 
     lateinit var nowRef : DatabaseReference
@@ -33,7 +36,8 @@ class ResultActivity : AppCompatActivity() {
         database = Firebase.database
         nowRef = database.getReference("" + roomID)
 
-        // 결과 리사이클러 뷰 //
+        /// 결과 리사이클러 뷰 ///
+
         val resultRecView : RecyclerView = findViewById(R.id.result_rv)
 
         resultRecView.setHasFixedSize(true)
@@ -44,43 +48,53 @@ class ResultActivity : AppCompatActivity() {
         val resultAdapt : resultAdapter = resultAdapter(this)
         resultRecView.adapter = resultAdapt
         // Result ChildListener //
-        val childEventListener = object : ChildEventListener {
-            override fun onChildAdded(dataSnapshot: DataSnapshot, previousChildName: String?) { // add 되었을 때 trigger
-                val comment = dataSnapshot.getValue<userInfo>() as userInfo
+        nowRef.get().addOnSuccessListener {
+            it.children.forEach {
+                nowRoom = (it.child("room").getValue(roomInfo::class.java) as roomInfo)
 
-                if (comment != null) {
-                    userNum++
-                    users.add(comment)
+                var user: userInfo = it.child("users").getValue(userInfo::class.java) as userInfo
+                users.add(user)
+            }
+
+            addUserAdapter()
+        }.addOnFailureListener {
+            makeToast("네트워크 오류!")
+        }
+    }
+
+    fun addUserAdapter(){
+        userNum = users.size
+
+        val nowDay : Calendar = Calendar.getInstance()
+        val edDay : Calendar = Calendar.getInstance()
+        nowDay.set(nowRoom._startDate.year, nowRoom._startDate.month, nowRoom._startDate.day)
+        edDay.set(nowRoom._endDate.year, nowRoom._endDate.month, nowRoom._endDate.day)
+
+        while(!isSameDate(nowDay, edDay)){
+            val now = dateClass(nowDay)
+            val dateKey = now.makeKey()
+
+            for(i in users){
+                if(i.selectedDates.containsKey(dateKey)){
+
                 }
             }
 
-            override fun onChildChanged(dataSnapshot: DataSnapshot, previousChildName: String?) {
-
-                val newComment = dataSnapshot.getValue<msgClass>()
-                val commentKey = dataSnapshot.key
-            }
-
-            override fun onChildRemoved(dataSnapshot: DataSnapshot) {
-                val commentKey = dataSnapshot.key
-            }
-
-            override fun onChildMoved(dataSnapshot: DataSnapshot, previousChildName: String?) {
-
-                val movedComment = dataSnapshot.getValue<msgClass>()
-                val commentKey = dataSnapshot.key
-            }
-
-            override fun onCancelled(databaseError: DatabaseError) {
-                Log.w(TAG, "postComments:onCancelled", databaseError.toException())
-                makeToast("Failed to load comments.")
-            }
+            nowDay.add(Calendar.DATE, 1)
         }
-        nowRef.child("users").addChildEventListener(childEventListener)
-
-        makeToast("")
     }
 
     private fun makeToast(msg: String){
         Toast.makeText(applicationContext, "" + msg, Toast.LENGTH_SHORT).show()
+    }
+
+    private fun isSameDate(src: Calendar, dst: Calendar) : Boolean{
+        if(src.get(Calendar.YEAR) != dst.get(Calendar.YEAR))
+            return false
+        if(src.get(Calendar.MONTH) != dst.get(Calendar.MONTH))
+            return false
+        if(src.get(Calendar.DATE) != dst.get(Calendar.DATE))
+            return false
+        return true
     }
 }

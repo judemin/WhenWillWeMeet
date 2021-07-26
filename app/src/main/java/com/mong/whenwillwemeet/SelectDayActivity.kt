@@ -40,7 +40,7 @@ class SelectDayActivity : AppCompatActivity() {
 
         //!// nowUser for test
         nowUser.name = "민상연"
-        nowUser.pid = "ABCDEFGHIJ"
+        nowUser.pid = "ABCDEFGHIZ"
         //!//
 
 
@@ -255,7 +255,7 @@ class SelectDayActivity : AppCompatActivity() {
 
     fun onClickDate(cal: Calendar, checkB: CheckBox){
         var nowDate = dateClass(cal)
-        val dateStr = "${nowDate.year}${nowDate.month}${nowDate.day}"
+        val dateStr = nowDate.makeKey()
 
         if(!checkB.isChecked) {
             checkB.isChecked = true
