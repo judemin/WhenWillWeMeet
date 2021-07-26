@@ -1,5 +1,6 @@
 package com.mong.whenwillwemeet
 
+import android.graphics.Color
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -42,7 +43,13 @@ class resultAdapter (private val resultAct: ResultActivity) :
         viewHolder.dayTV.text = "${nowDate.day}일 " +
                 "(${dateClass.dayofweek[nowDate.dayOfWeek - 1]})"
 
-        viewHolder.infoTV.text = "${nowDate.selectedNum}명 / ${resultAct.userNum}명"
+        val selectNum = nowDate.selectedNum
+        val userNum = resultAct.userNum
+        viewHolder.infoTV.text = "${selectNum}명 / ${userNum}명"
+        // FF ~ 00 => 256
+        val colorCode : Int = ((selectNum.toDouble() / userNum.toDouble()) * 256).toInt()
+        val colorString : String = Integer.toHexString(colorCode)
+        viewHolder.resultLL.setBackgroundColor(Color.parseColor("#${colorString}add1fc"))
     }
 
     fun addData(tmp : dateClass){

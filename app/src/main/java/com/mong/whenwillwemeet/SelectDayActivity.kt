@@ -251,7 +251,6 @@ class SelectDayActivity : AppCompatActivity() {
         val intent = Intent(this, ResultActivity::class.java)
         intent.putExtra("roomID",nowRoom._roomID)
         startActivity(intent)
-        finish()
     }
 
     fun onClickDate(cal: Calendar, checkB: CheckBox){
