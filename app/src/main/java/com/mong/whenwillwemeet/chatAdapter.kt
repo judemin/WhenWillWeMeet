@@ -1,5 +1,6 @@
 package com.mong.whenwillwemeet
 
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -13,6 +14,7 @@ import java.util.*
 
 class chatAdapter(private val selDay: SelectDayActivity) :
     RecyclerView.Adapter<chatAdapter.ViewHolder>() {
+    private val keyMap : MutableMap<String,Int> = mutableMapOf() // Mutable map 주의
     private val dataSet: Vector<msgClass> = Vector()
 
     class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
@@ -56,9 +58,17 @@ class chatAdapter(private val selDay: SelectDayActivity) :
         }
     }
 
-    fun addData(tmp : msgClass){
-        dataSet.add(tmp)
-        notifyItemInserted(dataSet.size - 1)
+    fun addData(key : String ,tmp : msgClass) : Boolean{
+        return if(!keyMap.contains(key)) {
+            keyMap[key] = dataSet.size
+
+            dataSet.add(tmp)
+            notifyItemInserted(dataSet.size - 1)
+
+            true
+        }else{
+            false
+        }
     }
 
     override fun getItemCount() = dataSet.size

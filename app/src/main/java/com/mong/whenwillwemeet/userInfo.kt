@@ -5,8 +5,8 @@ import android.os.Parcelable
 import java.util.*
 
 class userInfo() : Parcelable {
-    var pid : String = ""
-    var name : String = ""
+    var pid : String = "ABCDEFGHI"
+    var name : String = "tmp"
     var selectedDates : MutableMap<String, dateClass> = mutableMapOf()
 
     constructor(parcel: Parcel) : this() {

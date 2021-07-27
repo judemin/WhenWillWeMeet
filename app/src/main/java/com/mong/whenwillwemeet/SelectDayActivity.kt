@@ -22,6 +22,9 @@ class SelectDayActivity : AppCompatActivity() {
     var roomID = "VXTRURXLIU" ///!///
     var nowUser : userInfo = userInfo()
     var nowRoom : roomInfo = roomInfo()
+    //
+
+    lateinit var readyBtn : Button
 
     //
     lateinit var nowRef : DatabaseReference
@@ -32,6 +35,7 @@ class SelectDayActivity : AppCompatActivity() {
     var readyNum : Long = 0
     private lateinit var readyTV: TextView
     var isReady : Boolean = false
+    var isOpenResult : Boolean = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -69,7 +73,7 @@ class SelectDayActivity : AppCompatActivity() {
         val data: Data.Builder = Data.Builder()
         data.putString("roomID", roomID)
         data.putBoolean("isReady", isReady)
-        data.putString("pid",nowUser.pid)
+        data.putString("pid", nowUser.pid)
 
         val uploadWorkRequest: WorkRequest = OneTimeWorkRequestBuilder<deleteWorker>()
             .setInputData(data.build())
@@ -79,6 +83,11 @@ class SelectDayActivity : AppCompatActivity() {
         WorkManager
             .getInstance(applicationContext)
             .enqueue(uploadWorkRequest)
+    }
+
+    override fun onResume() {
+        super.onResume()
+        isOpenResult = false
     }
 
     private fun afterRoomSetting(roomInfoT: roomInfo){
@@ -95,6 +104,20 @@ class SelectDayActivity : AppCompatActivity() {
         noticeTV.text = "공지사항 : " + nowRoom._notice
         locationTV.text = "약속 장소 : " + nowRoom._location
         changeRoomNum(1, 0) // database changed 되었을 때 준비된 사람 변경, 현재 방에 있는 사람까지 가져오기
+
+        /// roomNum 동기화 ///
+
+        val numTextListener = object : ValueEventListener {
+            override fun onDataChange(snapshot: DataSnapshot) {
+                changeRoomNum(0, 0)
+            }
+
+            override fun onCancelled(error: DatabaseError) {
+                TODO("Not yet implemented")
+            }
+        }
+        database.getReference("" + roomID).child("readyNum").addValueEventListener(numTextListener)
+        database.getReference("" + roomID).child("userNum").addValueEventListener(numTextListener)
 
         /// 캘린더 리사이클러 뷰 세팅 ///
 
@@ -150,14 +173,14 @@ class SelectDayActivity : AppCompatActivity() {
             override fun onChildAdded(dataSnapshot: DataSnapshot, previousChildName: String?) { // add 되었을 때 trigger
                 val comment = dataSnapshot.getValue<msgClass>() as msgClass
 
-                if (comment != null)
-                    chatAdapt.addData(comment)
-
-                chatRecView.scrollToPosition(chatAdapt.itemCount - 1)
+                if (comment != null) {
+                    val res = chatAdapt.addData(dataSnapshot.key.toString(), comment)
+                    if(res)
+                        chatRecView.scrollToPosition(chatAdapt.itemCount - 1)
+                }
             }
 
             override fun onChildChanged(dataSnapshot: DataSnapshot, previousChildName: String?) {
-
                 val newComment = dataSnapshot.getValue<msgClass>()
                 val commentKey = dataSnapshot.key
             }
@@ -182,8 +205,9 @@ class SelectDayActivity : AppCompatActivity() {
 
         /// 준비/취소 처리 ///
 
-        val readyBtn : Button = findViewById(R.id.selectday_ready_btn)
+        readyBtn = findViewById(R.id.selectday_ready_btn)
         readyBtn.setOnClickListener {
+            readyBtn.isEnabled = false
             if(!isReady){ // 준비완료 처리
                 isReady  = true
 
@@ -199,6 +223,7 @@ class SelectDayActivity : AppCompatActivity() {
 
                 changeRoomNum(0, -1)
             }
+            readyBtn.isEnabled = true
         }
     }
 
@@ -232,19 +257,22 @@ class SelectDayActivity : AppCompatActivity() {
                 // Transaction completed
                 readyTV.text = "${readyNum}명 준비 / ${userNum}명 "
 
-                if(readyNum == userNum)
+                if (readyNum == userNum && !isOpenResult)
                     startResult()
+
+                nowRef.push()
             }
         })
     }
 
     fun startResult(){
+        isOpenResult = true
         val intent = Intent(this, ResultActivity::class.java)
-        intent.putExtra("roomID",nowRoom._roomID)
+        intent.putExtra("roomID", nowRoom._roomID)
         startActivity(intent)
     }
 
-    fun onClickDate(date : dateClass, state : Boolean){
+    fun onClickDate(date: dateClass, state: Boolean){
         var nowDate = date
         val dateStr = nowDate.makeKey()
 
