@@ -60,7 +60,7 @@ class ResultActivity : AppCompatActivity() {
 
             addUserAdapter()
         }.addOnFailureListener {
-            makeToast("네트워크 오류!")
+            makeToast("선택한 사람이 없어!")
         }
     }
 

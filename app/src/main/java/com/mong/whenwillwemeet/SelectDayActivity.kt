@@ -3,6 +3,8 @@ package com.mong.whenwillwemeet
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
+import android.view.Menu
+import android.view.MenuItem
 import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -85,6 +87,21 @@ class SelectDayActivity : AppCompatActivity() {
         WorkManager
             .getInstance(applicationContext)
             .enqueue(uploadWorkRequest)
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        menuInflater.inflate(R.menu.menu_selectday, menu)
+
+        return true
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        return if(item.itemId == R.id.menu_selectday_run_btn){
+            startResult()
+            true
+        } else {
+            super.onOptionsItemSelected(item)
+        }
     }
 
     override fun onResume() {
