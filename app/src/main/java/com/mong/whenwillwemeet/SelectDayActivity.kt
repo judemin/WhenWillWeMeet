@@ -19,7 +19,7 @@ class SelectDayActivity : AppCompatActivity() {
 
     private val TAG = "SelectDay"
 
-    var roomID = ""
+    var roomID = "VXTRURXLIU" ///!///
     var nowUser : userInfo = userInfo()
     var nowRoom : roomInfo = roomInfo()
 
@@ -138,7 +138,7 @@ class SelectDayActivity : AppCompatActivity() {
         // 채팅 리사이클러 뷰 //
         val chatRecView : RecyclerView = findViewById(R.id.selectday_chat_rv)
 
-        chatRecView.setHasFixedSize(true)
+        //chatRecView.setHasFixedSize(true)
 
         val chatLayoutManager = LinearLayoutManager(this);
         chatRecView.layoutManager = chatLayoutManager;

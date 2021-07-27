@@ -8,7 +8,7 @@ class dateClass {
 
     var day : Int = 0
     var dayOfWeek : Int = 0
-    var month : Int = 0
+    var month : Int = 0 // 사용할 때 month에 1 더해야 함
     var year : Int = 0
     var hour : Int = 0
     var min : Int = 0
