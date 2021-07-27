@@ -134,7 +134,6 @@
                 android:layout_marginTop="-5dp"
                 android:layout_marginLeft="40dp"
                 android:layout_marginRight="40dp"
-                android:padding="5dp"
                 android:weightSum="10"
                 android:background="@drawable/outline_notop"
                 >
@@ -155,6 +154,7 @@
                     android:src="@drawable/icon_send"
                     android:layout_gravity="center"
                     android:clickable="true"
+                    android:layout_margin="5dp"
                     />
 
             </LinearLayout>

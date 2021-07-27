@@ -75,6 +75,8 @@ class SelectDayActivity : AppCompatActivity() {
         data.putBoolean("isReady", isReady)
         data.putString("pid", nowUser.pid)
 
+        isReady = false
+
         val uploadWorkRequest: WorkRequest = OneTimeWorkRequestBuilder<deleteWorker>()
             .setInputData(data.build())
             .setConstraints(builder.build())
@@ -257,7 +259,7 @@ class SelectDayActivity : AppCompatActivity() {
                 // Transaction completed
                 readyTV.text = "${readyNum}명 준비 / ${userNum}명 "
 
-                if (readyNum == userNum && !isOpenResult)
+                if (readyNum == userNum && !isOpenResult && isReady)
                     startResult()
 
                 nowRef.push()

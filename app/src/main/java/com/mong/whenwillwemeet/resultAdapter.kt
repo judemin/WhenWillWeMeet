@@ -7,6 +7,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.LinearLayout
 import android.widget.TextView
+import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.view.isGone
 import androidx.core.view.isInvisible
 import androidx.recyclerview.widget.RecyclerView
@@ -17,13 +18,13 @@ class resultAdapter (private val resultAct: ResultActivity) :
     private val dataSet: Vector<dateClass> = Vector()
 
     class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
-        var resultLL : LinearLayout
+        var resultCL : ConstraintLayout
         var yearTV: TextView
         var dayTV: TextView
         var infoTV: TextView
 
         init {
-            resultLL = view.findViewById(R.id.row_result_ll)
+            resultCL = view.findViewById(R.id.row_result_date_cl)
             yearTV = view.findViewById(R.id.row_result_yearTV)
             dayTV = view.findViewById(R.id.row_result_dayTV)
             infoTV = view.findViewById(R.id.row_result_infoTV)
@@ -53,7 +54,7 @@ class resultAdapter (private val resultAct: ResultActivity) :
         if(colorCode < 0)
             colorString = "#00ADD1FC"
 
-        viewHolder.resultLL.setBackgroundColor(Color.parseColor(colorString))
+        viewHolder.resultCL.setBackgroundColor(Color.parseColor(colorString))
     }
 
     fun addData(tmp : dateClass){
