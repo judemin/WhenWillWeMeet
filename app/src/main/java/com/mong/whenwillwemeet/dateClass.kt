@@ -12,6 +12,8 @@ class dateClass {
     var year : Int = 0
     var hour : Int = 0
     var min : Int = 0
+
+    var selectedUser : Vector<String> = Vector()
     var selectedNum : Int = 0
 
     constructor() {}

@@ -60,7 +60,7 @@ class ResultActivity : AppCompatActivity() {
 
             addUserAdapter()
         }.addOnFailureListener {
-            makeToast("선택한 사람이 없어!")
+            makeToast("준비된 사람이 없는거 같아..ㅠㅜ")
         }
     }
 
@@ -92,15 +92,14 @@ class ResultActivity : AppCompatActivity() {
 
             for(i in users)
                 if(i.selectedDates.containsKey(dateKey))
-                    now.selectedNum++
+                    now.selectedUser.add(i.name)
 
-            resultAdapt.addData(now)
+            now.selectedNum = now.selectedUser.size
+
+            if(now.selectedNum != 0)
+                resultAdapt.addData(now)
             nowDay.add(Calendar.DATE, 1)
         }
-    }
-
-    private fun makeToast(msg: String){
-        Toast.makeText(applicationContext, "" + msg, Toast.LENGTH_SHORT).show()
     }
 
     private fun isSameDate(src: Calendar, dst: Calendar) : Boolean{
@@ -111,5 +110,9 @@ class ResultActivity : AppCompatActivity() {
         if(src.get(Calendar.DATE) != dst.get(Calendar.DATE))
             return false
         return true
+    }
+
+    private fun makeToast(msg: String){
+        Toast.makeText(applicationContext, "" + msg, Toast.LENGTH_SHORT).show()
     }
 }

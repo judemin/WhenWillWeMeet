@@ -23,11 +23,17 @@ class resultAdapter (private val resultAct: ResultActivity) :
         var dayTV: TextView
         var infoTV: TextView
 
+        var availLL : LinearLayout
+        var availTV: TextView
+
         init {
             resultCL = view.findViewById(R.id.row_result_date_cl)
             yearTV = view.findViewById(R.id.row_result_yearTV)
             dayTV = view.findViewById(R.id.row_result_dayTV)
             infoTV = view.findViewById(R.id.row_result_infoTV)
+
+            availLL = view.findViewById(R.id.row_result_available_ll)
+            availTV = view.findViewById(R.id.row_result_available_tv)
         }
     }
 
@@ -48,6 +54,13 @@ class resultAdapter (private val resultAct: ResultActivity) :
         val selectNum = nowDate.selectedNum
         val userNum = resultAct.userNum
         viewHolder.infoTV.text = "${selectNum}명 / ${userNum}명"
+
+        var tmpStr = ""
+        for(i in 0 until nowDate.selectedUser.size) // 0 until n -> 0 < n,   0..n -> 0 <= n
+            tmpStr += nowDate.selectedUser[i] + "\n"
+        tmpStr = tmpStr.removeRange(tmpStr.length-1,tmpStr.length)
+        viewHolder.availTV.text = tmpStr
+
         // FF ~ 00 => 256
         val colorCode : Int = ((selectNum.toDouble() / userNum.toDouble()) * 256).toInt() - 1
         var colorString : String = "#" + Integer.toHexString(colorCode) + "ADD1FC"
