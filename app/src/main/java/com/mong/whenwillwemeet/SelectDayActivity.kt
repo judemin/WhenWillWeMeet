@@ -55,6 +55,11 @@ class SelectDayActivity : AppCompatActivity() {
         if(intent.hasExtra("roomID"))
             roomID = intent.getStringExtra("roomID")
 
+        //!//
+        nowUser.pid = "ABCDEF"
+        nowUser.name = "김민지"
+        //!//
+
         database = Firebase.database
         nowRef = database.getReference("" + roomID)
 

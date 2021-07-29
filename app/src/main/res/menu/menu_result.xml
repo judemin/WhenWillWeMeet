@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <item
-        android:id="@+id/menu_selectday_run_btn"
+        android:id="@+id/menu_result_share_btn"
         android:icon="@drawable/share_icon"
         app:showAsAction="always"
         android:title="runManually" />

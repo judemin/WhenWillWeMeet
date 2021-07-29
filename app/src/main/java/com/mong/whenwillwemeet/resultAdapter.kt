@@ -47,8 +47,8 @@ class resultAdapter (private val resultAct: ResultActivity) :
     override fun onBindViewHolder(viewHolder: ViewHolder, position: Int) {
         val nowDate : dateClass = dataSet[position]
 
-        viewHolder.yearTV.text = "${nowDate.year}년 ${nowDate.month + 1}월"
-        viewHolder.dayTV.text = "${nowDate.day}일 " +
+        viewHolder.yearTV.text = "${nowDate.year}년"
+        viewHolder.dayTV.text = "${nowDate.month + 1}월 ${nowDate.day}일 " +
                 "(${dateClass.dayofweek[nowDate.dayOfWeek - 1]})"
 
         val selectNum = nowDate.selectedNum

@@ -45,7 +45,7 @@ class chatAdapter(private val selDay: SelectDayActivity) :
     override fun onBindViewHolder(viewHolder: ViewHolder, position: Int) {
         val nowMsg : msgClass = dataSet[position]
 
-        if(nowMsg.senderCode.equals(selDay.nowUser.pid)){ // 전송자가 본인일 경우
+        if(nowMsg.senderCode == selDay.nowUser.pid){ // 전송자가 본인일 경우
             viewHolder.leftNameTV.isGone = true
             viewHolder.leftLL.isInvisible = true
 

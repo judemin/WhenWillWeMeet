@@ -2,8 +2,11 @@ package com.mong.whenwillwemeet
 
 import android.os.Bundle
 import android.util.Log
+import android.view.Menu
+import android.view.MenuItem
 import android.widget.TextView
 import android.widget.Toast
+import androidx.appcompat.app.ActionBar
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -21,16 +24,20 @@ class ResultActivity : AppCompatActivity() {
 
     lateinit var nowRoom : roomInfo
 
+    lateinit var actionBar : ActionBar
+
     var users = Vector<userInfo>()
 
     lateinit var nowRef : DatabaseReference
     lateinit var database : FirebaseDatabase
 
+    var isNone = true
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_result)
 
-        val actionBar = supportActionBar
+        actionBar = supportActionBar!!
         if (actionBar != null)
             actionBar.title = "이때 만나자!"
 
@@ -50,6 +57,21 @@ class ResultActivity : AppCompatActivity() {
         }
     }
 
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        menuInflater.inflate(R.menu.menu_result, menu)
+
+        return true
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        return if(item.itemId == R.id.menu_result_share_btn){
+            // TODO
+            true
+        } else {
+            super.onOptionsItemSelected(item)
+        }
+    }
+
     private fun getUsers(){
         nowRef.child("users").get().addOnSuccessListener {
 
@@ -59,8 +81,14 @@ class ResultActivity : AppCompatActivity() {
             }
 
             addUserAdapter()
+
+            if(isNone)
+                if (actionBar != null)
+                    actionBar.title = "겹치는 날짜가 없나본데 우리..?ㅠㅜ"
+
         }.addOnFailureListener {
-            makeToast("준비된 사람이 없는거 같아..ㅠㅜ")
+            if (actionBar != null)
+                actionBar.title = "준비된 사람이 없는거 같아..ㅠㅜ"
         }
     }
 
@@ -91,8 +119,10 @@ class ResultActivity : AppCompatActivity() {
             val dateKey = now.makeKey()
 
             for(i in users)
-                if(i.selectedDates.containsKey(dateKey))
+                if(i.selectedDates.containsKey(dateKey)) {
                     now.selectedUser.add(i.name)
+                    isNone = false
+                }
 
             now.selectedNum = now.selectedUser.size
 
