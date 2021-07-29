@@ -42,6 +42,12 @@ class SelectDayActivity : AppCompatActivity() {
     var isReady : Boolean = false
     var isOpenResult : Boolean = false
 
+    // chat dateSet
+    lateinit var chatAdapt : chatAdapter
+
+    val keyMap : MutableMap<String,Int> = mutableMapOf() // Mutable map 주의
+    val chatDataSet: Vector<msgClass> = Vector()
+
     //
 
     private lateinit var clipboard : ClipboardManager
@@ -65,8 +71,8 @@ class SelectDayActivity : AppCompatActivity() {
             roomID = intent.getStringExtra("roomID")
 
         //!//
-        nowUser.pid = "ABCDEF"
-        nowUser.name = "김민지"
+        nowUser.pid = "ABCDZGF"
+        nowUser.name = "민연"
         //!//
 
         database = Firebase.database
@@ -201,12 +207,12 @@ class SelectDayActivity : AppCompatActivity() {
         // 채팅 리사이클러 뷰 //
         val chatRecView : RecyclerView = findViewById(R.id.selectday_chat_rv)
 
-        //chatRecView.setHasFixedSize(true)
+        chatRecView.setHasFixedSize(true)
 
         val chatLayoutManager = LinearLayoutManager(this);
         chatRecView.layoutManager = chatLayoutManager;
 
-        val chatAdapt = chatAdapter(this)
+        chatAdapt = chatAdapter(this)
         chatRecView.adapter = chatAdapt
         // Chatting ChildListener //
         val childEventListener = object : ChildEventListener {
@@ -214,7 +220,10 @@ class SelectDayActivity : AppCompatActivity() {
                 val comment = dataSnapshot.getValue<msgClass>() as msgClass
 
                 if (comment != null) {
-                    val res = chatAdapt.addData(dataSnapshot.key.toString(), comment)
+                    if(comment.senderCode == nowUser.pid)
+                        comment.isMine = true
+
+                    val res = addChatData(dataSnapshot.key.toString(), comment)
                     if(res)
                         chatRecView.scrollToPosition(chatAdapt.itemCount - 1)
                 }
@@ -264,6 +273,19 @@ class SelectDayActivity : AppCompatActivity() {
                 changeRoomNum(0, -1)
             }
             readyBtn.isEnabled = true
+        }
+    }
+
+    private fun addChatData(key : String ,tmp : msgClass) : Boolean{
+        return if(!keyMap.contains(key)) {
+            keyMap[key] = chatDataSet.size
+
+            chatDataSet.add(tmp)
+            chatAdapt.notifyInsert()
+
+            true
+        }else{
+            false
         }
     }
 

@@ -14,8 +14,6 @@ import java.util.*
 
 class chatAdapter(private val selDay: SelectDayActivity) :
     RecyclerView.Adapter<chatAdapter.ViewHolder>() {
-    private val keyMap : MutableMap<String,Int> = mutableMapOf() // Mutable map 주의
-    private val dataSet: Vector<msgClass> = Vector()
 
     class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         var leftLL : LinearLayout
@@ -43,9 +41,12 @@ class chatAdapter(private val selDay: SelectDayActivity) :
     }
 
     override fun onBindViewHolder(viewHolder: ViewHolder, position: Int) {
-        val nowMsg : msgClass = dataSet[position]
+        viewHolder.setIsRecyclable(false) // 퍼포먼스 저하, 뷰를 더이상 재사용하지 않음
 
-        if(nowMsg.senderCode == selDay.nowUser.pid){ // 전송자가 본인일 경우
+        val nowMsg : msgClass = selDay.chatDataSet[position]
+        val status = nowMsg.isMine
+
+        if(status){ // 전송자가 본인일 경우
             viewHolder.leftNameTV.isGone = true
             viewHolder.leftLL.isInvisible = true
 
@@ -58,19 +59,12 @@ class chatAdapter(private val selDay: SelectDayActivity) :
         }
     }
 
-    fun addData(key : String ,tmp : msgClass) : Boolean{
-        return if(!keyMap.contains(key)) {
-            keyMap[key] = dataSet.size
-
-            dataSet.add(tmp)
-            notifyItemInserted(dataSet.size - 1)
-
-            true
-        }else{
-            false
-        }
+    fun notifyInsert(){
+        notifyItemInserted(selDay.chatDataSet.size)
     }
 
-    override fun getItemCount() = dataSet.size
+    override fun getItemCount(): Int {
+        return  selDay.chatDataSet.size
+    }
 
 }

@@ -74,6 +74,7 @@
             android:layout_width="match_parent"
             android:layout_height="50dp"
             android:text="구글 로그인"
+            android:backgroundTint="@color/lightGray"
             />
 
         <Button
@@ -81,6 +82,7 @@
             android:layout_width="match_parent"
             android:layout_height="50dp"
             android:text="카카오톡 로그인"
+            android:backgroundTint="@color/kakaoYellow"
             />
 
     </LinearLayout>

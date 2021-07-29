@@ -6,4 +6,7 @@
     <color name="baseBlue">#add1fc</color>
     <color name="pastelRed">#FAA0A0</color>
 
+    <color name="kakaoYellow">#FAE100</color>
+    <color name="googleGreen">#34A853</color>
+
 </resources>
