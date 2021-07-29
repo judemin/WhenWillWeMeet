@@ -52,6 +52,7 @@
             android:layout_width="match_parent"
             android:layout_height="50dp"
             android:text="약속 찾을래?"
+            android:layout_margin="5dp"
             />
 
         <TextView
@@ -68,6 +69,7 @@
             android:layout_width="match_parent"
             android:layout_height="50dp"
             android:text="약속 잡을까?"
+            android:layout_margin="5dp"
             />
 
     </LinearLayout>

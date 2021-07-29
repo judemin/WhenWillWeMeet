@@ -1,4 +1,4 @@
-<resources>
+<resources xmlns:android="http://schemas.android.com/apk/res/android">
 
     <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
 
@@ -6,7 +6,9 @@
         <item name="colorPrimaryDark">@color/gray</item>
 
         <item name="android:textViewStyle">@style/TVFontStyle</item>
+
         <item name="android:buttonStyle">@style/BtnFontStyle</item>
+
         <item name="android:editTextStyle">@style/EditTextStyle</item>
 
     </style>
@@ -17,6 +19,7 @@
 
     <style name="BtnFontStyle" parent="android:Widget.Holo.Button">
         <item name="android:fontFamily">@font/gmarket_sans_medium</item>
+        <item name="android:background">@drawable/button_selector</item>
     </style>
 
     <style name="ETFontStyle" parent="android:Widget.EditText">
