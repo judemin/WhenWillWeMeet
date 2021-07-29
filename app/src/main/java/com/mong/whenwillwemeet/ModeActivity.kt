@@ -21,6 +21,8 @@ class ModeActivity : AppCompatActivity() {
     var nowUser : userInfo = userInfo()
     var roomID : String = ""
 
+    var isFinish = false
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.actibity_mode)
@@ -40,16 +42,18 @@ class ModeActivity : AppCompatActivity() {
 
         createBtn.setOnClickListener {
             createBtn.isEnabled = false
+            isFinish = true
 
             val intent = Intent(this, CreateRoomActivity::class.java)
             intent.putExtra("user", nowUser)
             startActivity(intent)
 
-            createBtn.isEnabled = true
+            finish()
         }
 
         findBtn.setOnClickListener {
             findBtn.isEnabled = false
+            isFinish = true
 
             val inputCode : EditText = findViewById(R.id.mode_inputcode_et)
             roomID = inputCode.text.toString()
@@ -90,6 +94,7 @@ class ModeActivity : AppCompatActivity() {
                 makeToast("네트워크 오류!")
             }
             findBtn.isEnabled = true
+            isFinish = false
         }
     }
 
@@ -98,11 +103,13 @@ class ModeActivity : AppCompatActivity() {
         intent.putExtra("user", nowUser)
         intent.putExtra("roomID", roomID)
         startActivity(intent)
+        finish()
     }
 
     override fun onDestroy() {
         super.onDestroy()
-        Toast.makeText(applicationContext,"안녕, 다음엔 꼭 한번 보자", Toast.LENGTH_SHORT).show()
+        if(!isFinish)
+            Toast.makeText(applicationContext,"안녕, 다음엔 꼭 한번 보자", Toast.LENGTH_SHORT).show()
     }
 
     private fun makeToast(msg : String){

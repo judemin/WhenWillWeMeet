@@ -1,5 +1,8 @@
 package com.mong.whenwillwemeet
 
+import android.content.ClipData
+import android.content.ClipboardManager
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
@@ -39,6 +42,10 @@ class SelectDayActivity : AppCompatActivity() {
     var isReady : Boolean = false
     var isOpenResult : Boolean = false
 
+    //
+
+    private lateinit var clipboard : ClipboardManager
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_selectday)
@@ -46,6 +53,8 @@ class SelectDayActivity : AppCompatActivity() {
         val actionBar = supportActionBar
         if (actionBar != null)
             actionBar.title = "그래서 우리 언제 만나?"
+
+        clipboard = getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
 
         if(intent.hasExtra("user"))
             nowUser = intent.getParcelableExtra("user")
@@ -128,6 +137,13 @@ class SelectDayActivity : AppCompatActivity() {
         noticeTV.text = "공지사항 : " + nowRoom._notice
         locationTV.text = "약속 장소 : " + nowRoom._location
         changeRoomNum(1, 0) // database changed 되었을 때 준비된 사람 변경, 현재 방에 있는 사람까지 가져오기
+
+        // roomID TV 복사 //
+
+        roomidTV.setOnClickListener {
+            copyToClip(nowRoom._roomID)
+            makeToast("약속 코드 복사했어!")
+        }
 
         /// roomNum 동기화 ///
 
@@ -287,6 +303,11 @@ class SelectDayActivity : AppCompatActivity() {
                 nowRef.push()
             }
         })
+    }
+
+    private fun copyToClip(content : String){
+        var clip = ClipData.newPlainText(UUID.randomUUID().toString(),content)
+        clipboard.setPrimaryClip(clip)
     }
 
     fun startResult(){

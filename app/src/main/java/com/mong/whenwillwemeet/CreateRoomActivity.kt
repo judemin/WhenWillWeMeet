@@ -1,5 +1,8 @@
 package com.mong.whenwillwemeet
 
+import android.content.ClipData
+import android.content.ClipboardManager
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.widget.*
@@ -10,6 +13,8 @@ import java.util.*
 
 class CreateRoomActivity : AppCompatActivity() {
 
+    private lateinit var clipboard : ClipboardManager
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_createroom)
@@ -17,6 +22,8 @@ class CreateRoomActivity : AppCompatActivity() {
         val actionBar = supportActionBar
         if (actionBar != null)
             actionBar.title = "애들 모으자!"
+
+        clipboard = getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
 
         var nowUser = userInfo()
         if(intent.hasExtra("user"))
@@ -107,6 +114,17 @@ class CreateRoomActivity : AppCompatActivity() {
             }
             roomCreateBtn.isEnabled = true
         }
+
+        val copyImage : ImageView = findViewById(R.id.createRoom_copyIV)
+        copyImage.setOnClickListener{
+            copyToClip(nowRoomInfo._roomID)
+            makeToast("약속 코드 복사했어!")
+        }
+    }
+
+    private fun copyToClip(content : String){
+        var clip = ClipData.newPlainText(UUID.randomUUID().toString(),content)
+        clipboard.setPrimaryClip(clip)
     }
 
     private fun makeToast(msg : String){

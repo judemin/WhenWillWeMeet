@@ -65,6 +65,7 @@ class ResultActivity : AppCompatActivity() {
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return if(item.itemId == R.id.menu_result_share_btn){
+            var shareStr = ""
             // TODO
             true
         } else {
