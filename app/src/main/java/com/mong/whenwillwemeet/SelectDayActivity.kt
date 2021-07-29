@@ -24,7 +24,7 @@ class SelectDayActivity : AppCompatActivity() {
 
     private val TAG = "SelectDay"
 
-    var roomID = "VXTRURXLIU" ///!///
+    var roomID = ""
     var nowUser : userInfo = userInfo()
     var nowRoom : roomInfo = roomInfo()
     //
@@ -69,11 +69,6 @@ class SelectDayActivity : AppCompatActivity() {
 
         if(intent.hasExtra("roomID"))
             roomID = intent.getStringExtra("roomID")
-
-        //!//
-        nowUser.pid = "ABCDZGF"
-        nowUser.name = "민연"
-        //!//
 
         database = Firebase.database
         nowRef = database.getReference("" + roomID)

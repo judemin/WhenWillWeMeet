@@ -63,8 +63,10 @@ class ModeActivity : AppCompatActivity() {
 
             nowRef.child("room").get().addOnSuccessListener {
 
-                if(it.getValue() == null)
+                if(it.getValue() == null) {
                     makeToast("약속이 없는거 같은데..?ㅠㅜ")
+                    isFinish = false
+                }
                 else{
                     var passwd : String = it.child("_password").getValue() as String
 
@@ -80,8 +82,10 @@ class ModeActivity : AppCompatActivity() {
                                 var passwdET : EditText = dialogView.findViewById<EditText>(R.id.dialog_passwd_et)
                                 if (passwd.equals(passwdET.text.toString())) // EditText에서 toString이 문제
                                     startSelectDay(nowUser, roomID)
-                                else
+                                else {
                                     makeToast("비밀번호 다시 확인해봐!")
+                                    isFinish = false
+                                }
                             }
                             .setNegativeButton("취소") { dialogInterface, i ->
                                 // 취소일때 아무 액션 없음
@@ -94,7 +98,6 @@ class ModeActivity : AppCompatActivity() {
                 makeToast("네트워크 오류!")
             }
             findBtn.isEnabled = true
-            isFinish = false
         }
     }
 

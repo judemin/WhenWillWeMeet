@@ -138,11 +138,24 @@
                 android:background="@drawable/outline_notop"
                 >
 
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="0.25"
+                    />
+
                 <EditText
                     android:id="@+id/selectday_chat_et"
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
-                    android:layout_weight="9"
+                    android:layout_weight="8.5"
+                    android:fontFamily="@font/gmarket_sans_medium"
+                    />
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="0.25"
                     />
 
                 <ImageView

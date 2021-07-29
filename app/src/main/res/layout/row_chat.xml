@@ -1,23 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_weight="2"
-    android:padding="4dp"
-    android:orientation="horizontal"
-    >
+    android:padding="3dp"
+    android:orientation="horizontal">
 
     <LinearLayout
         android:id="@+id/row_chat_leftll"
-        android:layout_width="0dp"
+        android:layout_width="wrap_content"
         android:layout_height="match_parent"
-        android:layout_weight="1"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
         android:background="@drawable/chat_outline"
         android:weightSum="10"
         android:orientation="vertical"
         android:layout_marginRight="5dp"
-
+        android:padding="10dp"
         >
 
         <TextView
@@ -27,8 +28,6 @@
             android:text="보낸 사람"
             android:textSize="8dp"
             android:gravity="left"
-            android:layout_marginTop="6dp"
-            android:layout_marginLeft="6dp"
             />
 
         <TextView
@@ -39,20 +38,23 @@
             android:textSize="15dp"
             android:textColor="#000000"
             android:gravity="left"
-            android:layout_marginBottom="6dp"
-            android:layout_marginLeft="6dp"
+            android:layout_gravity="center"
+            android:maxWidth="200dp"
             />
 
     </LinearLayout>
 
     <LinearLayout
         android:id="@+id/row_chat_rightll"
-        android:layout_width="0dp"
+        android:layout_width="wrap_content"
         android:layout_height="match_parent"
-        android:layout_weight="1"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
         android:background="@drawable/chat_outline_mine"
         android:orientation="vertical"
         android:layout_marginLeft="5dp"
+        android:padding="10dp"
         >
 
 
@@ -60,15 +62,14 @@
             android:id="@+id/row_chat_right_contextTV"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="텍스트 테스트"
+            android:text="테스트"
+            android:maxWidth="200dp"
             android:textSize="15dp"
             android:textColor="#000000"
             android:gravity="right"
-            android:layout_marginRight="6dp"
-            android:layout_marginTop="6dp"
-            android:layout_marginBottom="6dp"
+            android:layout_gravity="center"
             />
 
     </LinearLayout>
 
-</LinearLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

@@ -1,5 +1,6 @@
 package com.mong.whenwillwemeet
 
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.Menu
@@ -33,13 +34,16 @@ class ResultActivity : AppCompatActivity() {
 
     var isNone = true
 
+    //공유
+    var shareStr = "Test"
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_result)
 
         actionBar = supportActionBar!!
         if (actionBar != null)
-            actionBar.title = "이때 만나자!"
+            actionBar.title = "이날 만나자!"
 
         if(intent.hasExtra("roomID"))
             roomID = intent.getStringExtra("roomID")
@@ -50,8 +54,15 @@ class ResultActivity : AppCompatActivity() {
         nowRef = database.getReference("" + roomID)
 
         nowRef.child("room").get().addOnSuccessListener {
-            nowRoom = (it.getValue(roomInfo::class.java) as roomInfo)
-            getUsers()
+            if(it != null) {
+                nowRoom = (it.getValue(roomInfo::class.java) as roomInfo)
+
+                shareStr = "공지사항 : " + nowRoom._notice + "\n" + "장소 : " + nowRoom._location //
+
+                getUsers()
+            } else{
+                makeToast("네트워크 오류!")
+            }
         }.addOnFailureListener {
             makeToast("네트워크 오류!")
         }
@@ -65,8 +76,16 @@ class ResultActivity : AppCompatActivity() {
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return if(item.itemId == R.id.menu_result_share_btn){
-            var shareStr = ""
-            // TODO
+
+            val sendIntent: Intent = Intent().apply {
+                action = Intent.ACTION_SEND
+                putExtra(Intent.EXTRA_TEXT, shareStr)
+                type = "text/plain"
+            }
+
+            val shareIntent = Intent.createChooser(sendIntent, null)
+            startActivity(shareIntent)
+
             true
         } else {
             super.onOptionsItemSelected(item)
@@ -94,6 +113,7 @@ class ResultActivity : AppCompatActivity() {
     }
 
     private fun addUserAdapter(){
+
         userNum = users.size
 
         /// 결과 리사이클러 뷰 ///
@@ -119,16 +139,26 @@ class ResultActivity : AppCompatActivity() {
             val now = dateClass(nowDay)
             val dateKey = now.makeKey()
 
-            for(i in users)
-                if(i.selectedDates.containsKey(dateKey)) {
+            var tmpShareStr = "" //
+
+            for(i in users) {
+                if (i.selectedDates.containsKey(dateKey)) {
                     now.selectedUser.add(i.name)
                     isNone = false
+                    tmpShareStr += i.name + ", "
                 }
+            }
+            if(tmpShareStr.length > 2)
+                tmpShareStr = tmpShareStr.removeRange(tmpShareStr.length - 2, tmpShareStr.length)
 
             now.selectedNum = now.selectedUser.size
 
-            if(now.selectedNum != 0)
+            if(now.selectedNum != 0) {
                 resultAdapt.addData(now)
+
+                shareStr += "\n${now.year}년 ${now.month + 1}월 ${now.day}일 (${dateClass.dayofweek[now.dayOfWeek - 1]})" +
+                        "    ${now.selectedNum}명 / ${userNum}명\n[ " + tmpShareStr + " ] 참석 가능\n"
+            }
             nowDay.add(Calendar.DATE, 1)
         }
     }

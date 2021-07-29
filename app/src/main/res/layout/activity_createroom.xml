@@ -84,15 +84,22 @@
                     android:gravity="center"
                     />
 
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="0.5"
+                    />
+
                 <EditText
                     android:id="@+id/createRoom_passwdET"
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
-                    android:layout_weight="7.5"
+                    android:layout_weight="7"
                     android:maxLines="1"
                     android:maxLength="15"
                     android:inputType="textVisiblePassword"
                     android:hint="공백이면 비밀번호 없음"
+                    android:fontFamily="@font/gmarket_sans_medium"
                     />
 
             </LinearLayout>
@@ -191,14 +198,21 @@
                     android:gravity="center"
                     />
 
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="0.5"
+                    />
+
                 <EditText
                     android:id="@+id/createRoom_locationET"
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
-                    android:layout_weight="7.5"
+                    android:layout_weight="7"
                     android:maxLines="1"
                     android:inputType="textVisiblePassword"
                     android:hint="온라인"
+                    android:fontFamily="@font/gmarket_sans_medium"
                     />
 
             </LinearLayout>
@@ -260,14 +274,21 @@
                     android:gravity="center"
                     />
 
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="0.5"
+                    />
+
                 <EditText
                     android:id="@+id/createRoom_noticeET"
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
-                    android:layout_weight="7.5"
+                    android:layout_weight="7"
                     android:layout_gravity="center"
                     android:maxLines="3"
                     android:hint="우리 언제 만나?"
+                    android:fontFamily="@font/gmarket_sans_medium"
                     />
 
             </LinearLayout>
